@@ -110,9 +110,7 @@ class HomeScreen extends StatelessWidget {
                  BottomNavigationBarItem(
                    icon: Icon(
                      Icons.list_alt,
-
                    ),
-
                     label: 'words ',
                  ),
                  BottomNavigationBarItem(

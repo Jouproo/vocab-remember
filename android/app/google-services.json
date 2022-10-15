@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "504209927148",
+    "project_id": "essam-vocabe",
+    "storage_bucket": "essam-vocabe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504209927148:android:1cd3cc1a338687de332ec9",
+        "android_client_info": {
+          "package_name": "com.example.esaam_vocab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504209927148-nkk0uph5aepb2om6qn732u3cij9f85e0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.esaam_vocab",
+            "certificate_hash": "7235967687f85c36f5e0910b7dc84834660887c5"
+          }
+        },
+        {
+          "client_id": "504209927148-pvmbejf3q1fupfs3ltoo5d9fc89kvik1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3I61NOhKA322CdrnBUho64Jc1nuW2gmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504209927148-pvmbejf3q1fupfs3ltoo5d9fc89kvik1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>504209927148-f96nr433k06fsddqr32dmd2koefov8j1.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.504209927148-f96nr433k06fsddqr32dmd2koefov8j1</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>504209927148-nkk0uph5aepb2om6qn732u3cij9f85e0.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCt3L5wzOaWFD5d2cNNGa1wlaH0DxCWQto</string>
+	<key>GCM_SENDER_ID</key>
+	<string>504209927148</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.esaamVocab</string>
+	<key>PROJECT_ID</key>
+	<string>essam-vocabe</string>
+	<key>STORAGE_BUCKET</key>
+	<string>essam-vocabe.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:504209927148:ios:f2571ffc7911c0f9332ec9</string>
+</dict>
+</plist>

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../layout/cubit/layout_cubit.dart';
 
@@ -54,20 +55,23 @@ Widget defaultTextFormField(
         onTap!();
       },
     );
-
+         //Dismissible
+// onDismissed: (direction){
+// LayoutCubit.get(context).deleteData(id: model['id']);
+// },
   Widget wordItemBuild(Map model,context,index) => Dismissible(
     key: Key(model['id'].toString()),
 
-    child: Column(
-      children: [
-        InkWell(
-          key: Key(model['id'].toString()),
-          onTap: (){
-           // LayoutCubit.get(context).updateData(item: 'definitionStatus',status: 'true', id: model['id']);
-            LayoutCubit.get(context). changeShowDefinition(id:model['id'],index: index ,);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
+      child: Column(
+        children: [
+          InkWell(
+            key: Key(model['id'].toString()),
+            onTap: (){
+             // LayoutCubit.get(context).updateData(item: 'definitionStatus',status: 'true', id: model['id']);
+              LayoutCubit.get(context). changeShowDefinition(id:model['id'],index: index ,);
+            },
             child: Align(
               alignment: AlignmentDirectional.topStart,
               child: Container(
@@ -76,19 +80,19 @@ Widget defaultTextFormField(
                   color: Colors.grey[300],
                   borderRadius: const BorderRadiusDirectional.only(
                     bottomEnd: Radius.circular(
-                      10.0,
+                      05.0,
                     ),
                     topStart: Radius.circular(
-                      10.0,
+                      05.0,
                     ),
                     topEnd: Radius.circular(
-                      10.0,
+                      05.0,
                     ),
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(
-                  vertical: 08.0,
-                  horizontal: 10.0,
+                  vertical: 02.0,
+                  horizontal: 08.0,
                 ),
                 child: Row(
                   children: [
@@ -99,29 +103,34 @@ Widget defaultTextFormField(
                             fontWeight: FontWeight.bold ),
                       ),
                     ),
-                    Expanded(
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsetsDirectional.only(start: 130),
-                         // padding: const EdgeInsets.only(left:150),
-                          child: IconButton(
-                            onPressed: ()
-                            {
-                              LayoutCubit.get(context).changeFavorite(id: model['id'], index: index);
-                              // LayoutCubit.get(context).updateData(
-                              //   status: 'favorite',
-                              //   id: model['id'],
-                              //   item: 'status'
-                              // );
+                    IconButton(
+                      onPressed: ()
+                      {
+                        LayoutCubit.get(context).changeFavorite(id: model['id'], index: index);
+                        // LayoutCubit.get(context).updateData(
+                        //   status: 'favorite',
+                        //   id: model['id'],
+                        //   item: 'status'
+                        // );
 
-                            },
-                            icon:  Icon(
-                              Icons.favorite,
-                              color:model['status']=='new'? Colors.grey : Colors.redAccent,
-                              size: 28,
-                            ),
-                          ),
-                        ),
+                      },
+                      icon:  Icon(
+                        Icons.favorite,
+                        color:model['status']=='new'? Colors.grey : Colors.red[700],
+                        size: 25,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: ()
+                      {
+                        LayoutCubit.get(context).deleteData(id: model['id']);
+
+
+                      },
+                      icon:  const Icon(
+                        Icons.delete_outline,
+                        color: Colors.blueAccent,
+                        size: 25,
                       ),
                     ),
 
@@ -132,24 +141,24 @@ Widget defaultTextFormField(
 
             ),
           ),
-        ),
 
-              if(model['definition'] != '')
-        if(model['definitionStatus'] == 'true')
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Align(
-            alignment: AlignmentDirectional.topStart,
-                 // LayoutCubit.get(context).words
-            child: Text(
-              'definition : ${model['definition']}',
-              style: const TextStyle(fontSize: 15 ,
-                  fontWeight: FontWeight.bold ),
+                if(model['definition'] != '')
+          if(model['definitionStatus'] == 'true')
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+                   // LayoutCubit.get(context).words
+              child: Text(
+                'definition : ${model['definition']}',
+                style: const TextStyle(fontSize: 15 ,
+                    fontWeight: FontWeight.bold ),
+              ),
             ),
           ),
-        ),
 
-      ],
+        ],
+      ),
     ),
     onDismissed: (direction){
       LayoutCubit.get(context).deleteData(id: model['id']);
@@ -167,3 +176,40 @@ Widget defaultTextFormField(
       ),
       itemCount: words.length
   );
+void navigateTo(context, widget)=>  Navigator.push(context,
+    MaterialPageRoute(builder: (context)=> widget));
+
+void navigateAndFinish(context,widget)=> Navigator.pushAndRemoveUntil(context,
+    MaterialPageRoute(builder: (context)=> widget), (route) => false);
+
+void showToast({required String msg,  Color ? color}) =>  Fluttertoast.showToast(
+    msg: msg ,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 5,
+    backgroundColor: color ,
+    textColor: Colors.white,
+    fontSize: 16.0
+);
+
+Widget defaultButton({
+  Color ? backgroundColor ,
+  double width = double.infinity,
+  required Function  onPressedFunction ,
+  required String text,
+  bool isUpperCase = true,
+  double radius = 0,
+}) => Container(
+  width: width,
+  decoration: BoxDecoration(color: backgroundColor,
+      borderRadius: BorderRadius.all(Radius.circular(radius))),
+  child: MaterialButton(
+    onPressed: (){
+      onPressedFunction();
+    },
+    child: Text( isUpperCase? text.toUpperCase():text,
+      style: const TextStyle(
+        color: Colors.white,
+      ),),
+  ),
+);
