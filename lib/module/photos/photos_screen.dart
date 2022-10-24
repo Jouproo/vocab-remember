@@ -9,11 +9,12 @@ class PhotosScreen extends StatelessWidget {
     return Scaffold(
 
       body:  Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 15 ,),
 
           Align(
-            alignment: AlignmentDirectional.topStart,
+            alignment: AlignmentDirectional.center,
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -34,10 +35,12 @@ class PhotosScreen extends StatelessWidget {
                 vertical: 15.0,
                 horizontal: 10.0,
               ),
-              child: const Text(
-                'photos ',
-                style: TextStyle(fontSize: 18 ,
-                    fontWeight: FontWeight.bold ),
+              child:const Center(
+                child:  Text(
+                  'photos ',
+                  style: TextStyle(fontSize: 18 ,
+                      fontWeight: FontWeight.bold ),
+                ),
               ),
             ),
           ),

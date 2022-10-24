@@ -14,7 +14,30 @@ class WordsScreen extends StatelessWidget {
        listener: (context, state){},
         builder: (context, state) {
           LayoutCubit cubit = LayoutCubit.get(context);
-          return  Scaffold(
+          return
+            Scaffold(
+              appBar: AppBar(
+                elevation: 0.0,
+                title: const Center(
+                  child:  Text('All Words' ,style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      color: Colors.black)),
+                ),
+              ),
+              body:   SafeArea(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: wordsBuilder(words: cubit.words),
+                    ),
+                  )
+              ),
+
+            );
+          Scaffold(
+            appBar: AppBar(),
             body:   wordsBuilder(words: cubit.words),
 
           );

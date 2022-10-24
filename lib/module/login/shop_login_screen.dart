@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../layout/layout_screen.dart';
+import '../../layout/cubit/layout_screen.dart';
 import '../../share/cash/cash_helper.dart';
 import '../../share/components/components.dart';
 import '../register/shop_register_screen.dart';
 import 'cubit/cubit.dart';
 import 'cubit/states.dart';
 
-class SocialLoginScreen extends StatelessWidget {
+class AppLoginScreen extends StatelessWidget {
 
   var   emailController = TextEditingController();
   var  passwordController = TextEditingController();

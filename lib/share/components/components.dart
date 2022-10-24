@@ -1,8 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../layout/cubit/layout_cubit.dart';
+import '../appspaces.dart';
+import '../const/colors/colors.dart';
 
 
 
@@ -213,3 +217,53 @@ Widget defaultButton({
       ),),
   ),
 );
+Widget mainBuildItem (
+    {
+      required String image,
+      required String text,
+      required bool isSelected,
+      required VoidCallback onTap,
+      double ? fontSize = 18,
+      Color? unSelectedImageColor,
+    })=> Expanded (
+  child: GestureDetector(
+    onTap: (){
+      onTap();
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        //gradient: isSelected ? appGradient : null,
+        color: !isSelected ? ChooseColor.defaultBackgroundColor : ChooseColor.defaultColor,
+        // color: !isSelected ? ChooseColor.defaultBackgroundColor: ChooseColor.defaultColor,
+        //!isSelected ? Colors.grey[100] : const Color(0xFF1A5276),
+      ),
+      child: Column(
+          children: [
+            AppSpaces.vertical15,
+            SizedBox(
+
+            // height: Get.height/8,
+              child: Image.asset(
+                image,
+                width: double.infinity,
+                fit: BoxFit.fill,
+
+                // color: isSelected ? Colors.white :  Get.theme.primaryColor,
+                //isSelected ? Colors.white : const Color(0xFF1A5276),
+              ),
+            ),
+            AppSpaces.vertical15,
+            Text(
+              text,
+              style: TextStyle(
+                color:  isSelected ? Colors.white : Colors.black,
+                fontSize: fontSize , ),
+            ),
+            AppSpaces.vertical15,
+          ]),
+    ),
+  ),
+);
+
+

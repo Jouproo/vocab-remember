@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../module/home/home_screen.dart';
+
 class LayoutCubit  extends Cubit<LayoutStates>{
 
   LayoutCubit(): super(AppInitialState()) ;
@@ -21,14 +23,17 @@ class LayoutCubit  extends Cubit<LayoutStates>{
 
   List <Widget> screens =
   [
+     Layout(),
      WordsScreen(),
      FavoritesScreen(),
      PhotosScreen(),
+
 
   ];
 
 
   List<String> titles = [
+    'Home'
     'Words',
     'Favorites ',
     'Photos',

@@ -3,8 +3,8 @@ import 'package:esaam_vocab/layout/cubit/states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../share/components/components.dart';
-import 'cubit/layout_cubit.dart';
+import '../../share/components/components.dart';
+import 'layout_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -27,10 +27,10 @@ class HomeScreen extends StatelessWidget {
            LayoutCubit cubit = LayoutCubit.get(context);
            return  Scaffold(
              key: scaffoldKey,
-             appBar: AppBar(
-               title:  Text(cubit.titles[cubit.currentIndex]),
-
-             ),
+             // appBar: AppBar(
+             //   title:  Text(cubit.titles[cubit.currentIndex]),
+             //
+             // ),
              body: cubit.screens[cubit.currentIndex],
              floatingActionButton: FloatingActionButton(
                onPressed: (){
@@ -107,6 +107,12 @@ class HomeScreen extends StatelessWidget {
                  cubit.changeIndex(index);
                },
                items: const [
+                 BottomNavigationBarItem(
+                   icon: Icon(
+                     Icons.home,
+                   ),
+                   label: 'Home ',
+                 ),
                  BottomNavigationBarItem(
                    icon: Icon(
                      Icons.list_alt,

@@ -42,8 +42,9 @@ class AppRegisterCubit extends Cubit<AppRegisterStates> {
     emit(AppRegisterLoadingState());
            FirebaseAuth.instance.createUserWithEmailAndPassword(
                email: email,
-               password: password).then((value) {
-                 createUser(
+               password: password
+                ).then((value) {
+                    createUser(
                      name: name,
                      email: email,
                      userId: value.user!.uid,
