@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esaam_vocab/module/register/cubit/states.dart';
+import 'package:esaam_vocab/share/components/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../model/user_model.dart';
 
@@ -14,6 +19,7 @@ import '../../../model/user_model.dart';
 class AppRegisterCubit extends Cubit<AppRegisterStates> {
 
   AppRegisterCubit() : super(AppRegisterInitialState());
+  
 
 
 
@@ -32,40 +38,65 @@ class AppRegisterCubit extends Cubit<AppRegisterStates> {
     emit(AppRegisterChangePasswordVisibilityState());
   }
 
-  void userRegister({
+  Future<void> userSignUp({
         required String name,
         required String  email,
         required String password,
-        required String phone,
-
-      }) {
+    required BuildContext context
+      })   async {
     emit(AppRegisterLoadingState());
-           FirebaseAuth.instance.createUserWithEmailAndPassword(
-               email: email,
-               password: password
-                ).then((value) {
-                    createUser(
-                     name: name,
-                     email: email,
-                     userId: value.user!.uid,
-                     phone: phone);
-               emit(AppRegisterSuccessState());
-               }).catchError((error){
-                 emit(AppRegisterErrorState(error));
-           });
+    try{
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                 email: email,
+                 password: password
+                  );
+         createUser(
+             name: name,
+             email: email,
+             userId: FirebaseAuth.instance.currentUser!.uid,
+         );
+    }on Exception catch (e) {
+       debugPrint(' run typ  ${e.runtimeType}') ;
+      emit(AppRegisterErrorState(e.toString()));
+      log('Exception @createAccount: $e');
+      showError(error: e, context: context,color:Colors.redAccent );
+
+    }
+    //        FirebaseAuth.instance.createUserWithEmailAndPassword(
+    //            email: email,
+    //            password: password
+    //             )
+    //         .then((value) {
+    //                 createUser(
+    //                  name: name,
+    //                  email: email,
+    //                  userId: value.user!.uid,
+    //                 );
+    //            emit(AppRegisterSuccessState());
+    //
+    //            }).catchError((error)  {
+    //          debugPrint(error);
+    //            emit(AppRegisterErrorState(error));
+    //              //debugPrint(error);
+    //            log('Exception @createAccount: $error');
+    //            showError(error: error, context: context,color:Colors.redAccent );
+    //        });
   }
+
+
+
 
   void createUser({
     required String name,
     required String  email,
     required String userId,
-    required String phone,
+
   }){
     UsersModel model =  UsersModel(
         name: name,
         email: email,
-        phone:  phone,
-        uId: userId);
+        uId: userId,
+    );
 
      FirebaseFirestore.instance.collection('users').doc(userId)
          .set(model.toMap()).then((value) {
@@ -75,7 +106,15 @@ class AppRegisterCubit extends Cubit<AppRegisterStates> {
      });
   }
 
-
+  // _showDialog({required error, required BuildContext context}) {
+  //   if (error.runtimeType == NoSuchMethodError) {
+  //     error = 'UnIdentified Error!';
+  //   } else if (error.runtimeType != String) {
+  //     error = (error?.message != null) ? error?.message : 'UnIdentified Error';
+  //   }
+  //   final snackBar = SnackBar(content: Text('ERROR: $error'));
+  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // }
 
 }
 

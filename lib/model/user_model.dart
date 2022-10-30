@@ -10,6 +10,7 @@ class UsersModel {
   String ? image;
   String ? cover;
   String ? bio;
+
   bool ? isEmailVerified;
 
   UsersModel({

@@ -22,3 +22,12 @@ class AppLoginErrorState extends AppLoginStates
 
   AppLoginErrorState(this.error);
 }
+class AppUserCreateSuccessState extends AppLoginStates
+{}
+
+class AppUserCreateErrorState extends AppLoginStates
+{
+  final String error;
+
+  AppUserCreateErrorState(this.error);
+}

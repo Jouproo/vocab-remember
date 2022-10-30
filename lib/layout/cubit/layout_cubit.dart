@@ -3,6 +3,8 @@ import 'package:esaam_vocab/layout/cubit/states.dart';
 import 'package:esaam_vocab/module/Words/words_screen.dart';
 import 'package:esaam_vocab/module/favorites/favorites_screen.dart';
 import 'package:esaam_vocab/module/photos/photos_screen.dart';
+import 'package:esaam_vocab/share/const/appassets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,10 +29,7 @@ class LayoutCubit  extends Cubit<LayoutStates>{
      WordsScreen(),
      FavoritesScreen(),
      PhotosScreen(),
-
-
   ];
-
 
   List<String> titles = [
     'Home'
@@ -142,6 +141,7 @@ class LayoutCubit  extends Cubit<LayoutStates>{
       emit(AppGetDatabaseState());
     });
   }
+
   void deleteData({
      required int   id,
   }) async
@@ -184,5 +184,20 @@ class LayoutCubit  extends Cubit<LayoutStates>{
 
     emit(AppChangeBottomSheetState());
   }
+
+
+  ImageProvider<Object> getProfilePhoto() {
+    final imageUrl = FirebaseAuth.instance.currentUser!.photoURL;
+    if (imageUrl == null) {
+      return const AssetImage('icons/profile.png');
+    }
+    return NetworkImage(imageUrl);
+  }
+
+
+
+
+
+
 
 }

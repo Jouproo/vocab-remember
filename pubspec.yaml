@@ -52,6 +52,9 @@ dependencies:
   firebase_storage: ^10.3.7
   get: ^4.6.1
   lottie: ^1.4.1
+  google_sign_in: ^5.4.2
+  font_awesome_flutter: ^10.2.1
+  flutter_svg: ^1.1.5
 
 
 
@@ -80,6 +83,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - icons/
+    - icons/svgVectors/SignUp.svg
+    - icons/svgVectors/login.svg
+    - icons/svgVectors/googleLogo.svg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

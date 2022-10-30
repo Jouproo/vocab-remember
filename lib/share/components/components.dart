@@ -7,6 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 import '../../layout/cubit/layout_cubit.dart';
 import '../appspaces.dart';
 import '../const/colors/colors.dart';
+import '../const/colors/configs.dart';
 
 
 
@@ -196,25 +197,52 @@ void showToast({required String msg,  Color ? color}) =>  Fluttertoast.showToast
     fontSize: 16.0
 );
 
+ showError({required error, required BuildContext context, Color ? color}) {
+  if (error.runtimeType == NoSuchMethodError) {
+    error = 'UnIdentified Error!';
+  } else if (error.runtimeType != String) {
+    error = (error?.message != null) ? error?.message : 'UnIdentified Error';
+  }
+   Fluttertoast.showToast(
+      msg: error ,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: color ,
+      textColor: Colors.white,
+      fontSize: 16.0
+  );
+  // final snackBar = SnackBar(content: Text('ERROR: $error'));
+  // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
 Widget defaultButton({
   Color ? backgroundColor ,
   double width = double.infinity,
+  double high = 50.0,
   required Function  onPressedFunction ,
   required String text,
   bool isUpperCase = true,
-  double radius = 0,
+  double radius = 20,
 }) => Container(
-  width: width,
+     margin: const EdgeInsets.symmetric(
+        vertical: 25.0,
+        horizontal: 70.0,
+        ),
+     width: width,
+     height:high ,
   decoration: BoxDecoration(color: backgroundColor,
       borderRadius: BorderRadius.all(Radius.circular(radius))),
   child: MaterialButton(
     onPressed: (){
       onPressedFunction();
     },
+
     child: Text( isUpperCase? text.toUpperCase():text,
-      style: const TextStyle(
+      style: kLargeTextStyle.copyWith(
         color: Colors.white,
-      ),),
+      ),
+    ),
   ),
 );
 Widget mainBuildItem (

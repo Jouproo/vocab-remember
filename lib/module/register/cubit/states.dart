@@ -12,7 +12,6 @@ class AppRegisterSuccessState extends AppRegisterStates
 class AppRegisterErrorState extends AppRegisterStates
 {
   final String error;
-
   AppRegisterErrorState(this.error);
 }
 class AppUserCreateSuccessState extends AppRegisterStates

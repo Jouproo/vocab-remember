@@ -19,8 +19,8 @@ const kAppBarStyle = TextStyle(
 
 const kLargeTextStyle = TextStyle(
   fontFamily: 'Montserrat',
-  fontWeight: FontWeight.w600,
-  fontSize: 20.0,
+  fontWeight: FontWeight.w500,
+  fontSize: 18.0,
   color: Color(kPrimaryColor),
 );
 

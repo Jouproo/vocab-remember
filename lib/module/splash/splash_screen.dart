@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:esaam_vocab/module/login/app_login_screen.dart';
 import 'package:esaam_vocab/share/components/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void timerDone() {
-    navigateAndFinish(context, HomeScreen());
+    navigateAndFinish(context, AppLoginScreen());
     //navigateTo(context, HomeScreen());
   }
 

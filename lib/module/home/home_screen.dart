@@ -1,8 +1,7 @@
-import 'package:esaam_vocab/share/appspaces.dart';
-import 'package:esaam_vocab/share/const/appassets.dart';
+
 import 'package:flutter/material.dart';
 
-import '../../share/components/components.dart';
+import '../../layout/cubit/layout_cubit.dart';
 import '../../share/const/colors/configs.dart';
 
 class Layout extends  StatelessWidget {
@@ -24,9 +23,10 @@ class Layout extends  StatelessWidget {
                        style:kAppBarStyle
                      ),
                    ),
-                   const CircleAvatar(
+                    CircleAvatar(
                      radius: 20.0,
-                     backgroundImage: AssetImage(AppAssets.livingRoomImage),
+                     backgroundImage:LayoutCubit.get(context).getProfilePhoto(),
+                   //  AssetImage(AppAssets.livingRoomImage),
                      backgroundColor: Colors.transparent,
 
                    )
