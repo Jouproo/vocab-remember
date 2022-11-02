@@ -80,9 +80,9 @@ class AppRegisterScreen extends StatelessWidget {
                                 ),
                               ),
                               BottomBarTextField(
-                                controller: nameController,
+                               // controller: nameController,
                                 onChanged: (String value){
-                                  email = value ;
+                                  name = value ;
                                   if (kDebugMode) {
                                     print(email);
                                   }
@@ -102,7 +102,7 @@ class AppRegisterScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 20,),
                               BottomBarTextField(
-                                controller: emailController,
+                                //controller: emailController,
                                 onChanged: (String value){
                                   email = value ;
                                   if (kDebugMode) {
@@ -124,7 +124,7 @@ class AppRegisterScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 20,),
                               BottomBarTextField(
-                                controller: passwordController,
+                             //   controller: passwordController,
                                 onChanged: (String value){
                                   password = value ;
                                   print(password);
@@ -156,9 +156,9 @@ class AppRegisterScreen extends StatelessWidget {
                                   onPressedFunction: (){
                                     if(formKey.currentState!.validate()){
                                       cubit.userSignUp(
-                                          email: emailController.text,
-                                          password: passwordController.text ,
-                                          name: nameController.text,
+                                          email: email!,
+                                          password: password! ,
+                                          name: name!,
                                           context: context
                                       );}
                                     // emailController.clear();

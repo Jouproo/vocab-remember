@@ -17,87 +17,84 @@ class HomeScreen extends StatelessWidget {
    var dateController = TextEditingController();
 
 
+
    @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (BuildContext context) => LayoutCubit()..createDatabase(),
-         child:BlocConsumer<LayoutCubit,LayoutStates>(
+        create: (BuildContext context) => AppCubit()..getUserData()..getWords(),
+         child:BlocConsumer<AppCubit,AppStates>(
          listener: (context,state){},
          builder: (context,stat){
-           LayoutCubit cubit = LayoutCubit.get(context);
+           AppCubit cubit = AppCubit.get(context);
            return  Scaffold(
              key: scaffoldKey,
-             // appBar: AppBar(
-             //   title:  Text(cubit.titles[cubit.currentIndex]),
-             //
-             // ),
              body: cubit.screens[cubit.currentIndex],
-             floatingActionButton: FloatingActionButton(
-               onPressed: (){
-
-                 if (cubit.isBottomSheetShown){
-
-                   if(formKey.currentState!.validate()){
-                     cubit.insertToDatabase(
-                         word: wordController.text,
-                         definition: definitionController.text,
-                         name: '',);
-                     Navigator.pop(context);
-                   }
-
-                 }else{
-                   scaffoldKey.currentState!.showBottomSheet(
-                           (context) => Container(
-                         color: Colors.white,
-                         padding:  const EdgeInsets.all(
-                           20.0,
-                         ),
-                         child: Form(
-                           key: formKey,
-                           child: Column(
-                             mainAxisSize: MainAxisSize.min,
-                             children: [
-                               defaultTextFormField(
-                                 controller: wordController,
-                                 textInputType:TextInputType.text,
-                                 validateText: 'title must not be empty',
-                                 label: 'Enter New Word',
-                                 prefix: Icons.title_outlined,
-                                 radius: 15
-                               ),
-                               const SizedBox(
-                                 height: 10,
-                               ),
-                               defaultTextFormField(
-                                 controller: definitionController,
-                                 textInputType:TextInputType.text,
-                                 label: 'Enter Definition',
-                                 prefix: Icons.title_outlined,
-                                 radius: 15
-                               ),
-
-                             ],
-                           ),
-                         ),
-                       ),
-                               elevation: 20,
-
-                       ).closed.then((value) {
-                         cubit.changeBottomSheetState(isShow: false, icon: Icons.edit);
-                         wordController.clear();
-                         definitionController.clear();
-                   });
-
-                   cubit.changeBottomSheetState(isShow: true, icon: Icons.add);
-
-                 }
-
-                // cubit.insertToDatabase(word: 'welcome', definition: 'its mean hello ', name: 'yousef');
-               },
-               child: Icon (
-                   cubit.fabIcon
-               ),
-             ),
+             // floatingActionButton: FloatingActionButton(
+             //   onPressed: (){
+             //
+             //     if (cubit.isBottomSheetShown){
+             //
+             //       if(formKey.currentState!.validate()){
+             //         cubit.insertToDatabase(
+             //             word: wordController.text,
+             //             definition: definitionController.text,
+             //             name: '',);
+             //         Navigator.pop(context);
+             //       }
+             //
+             //     }else{
+             //       scaffoldKey.currentState!.showBottomSheet(
+             //               (context) => Container(
+             //             color: Colors.white,
+             //             padding:  const EdgeInsets.all(
+             //               20.0,
+             //             ),
+             //               child: Form(
+             //               key: formKey,
+             //               child: Column(
+             //                 mainAxisSize: MainAxisSize.min,
+             //                 children: [
+             //                   defaultTextFormField(
+             //                     controller: wordController,
+             //                     textInputType:TextInputType.text,
+             //                     validateText: 'title must not be empty',
+             //                     label: 'Enter New Word',
+             //                     prefix: Icons.title_outlined,
+             //                     radius: 15
+             //                   ),
+             //                   const SizedBox(
+             //                     height: 10,
+             //                   ),
+             //                   defaultTextFormField(
+             //                     controller: definitionController,
+             //                     textInputType:TextInputType.text,
+             //                     label: 'Enter Definition',
+             //                     prefix: Icons.title_outlined,
+             //                     radius: 15
+             //                   ),
+             //
+             //                 ],
+             //               ),
+             //             ),
+             //           ),
+             //                   elevation: 20,
+             //
+             //           ).closed.then((value) {
+             //             cubit.changeBottomSheetState(isShow: false, icon: Icons.edit);
+             //             wordController.clear();
+             //             definitionController.clear();
+             //       });
+             //
+             //       cubit.changeBottomSheetState(isShow: true, icon: Icons.add);
+             //
+             //     }
+             //
+             //    // cubit.insertToDatabase(word: 'welcome', definition: 'its mean hello ', name: 'yousef');
+             //   },
+             //   child: Icon (
+             //       cubit.fabIcon
+             //   ),
+             // ),
              bottomNavigationBar: BottomNavigationBar(
                type: BottomNavigationBarType.fixed,
                elevation: 0.0,

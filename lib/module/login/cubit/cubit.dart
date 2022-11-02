@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:esaam_vocab/layout/cubit/layout_cubit.dart';
 import 'package:esaam_vocab/module/login/cubit/states.dart';
 import 'package:esaam_vocab/share/components/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,6 +37,7 @@ class AppLoginCubit extends Cubit<AppLoginStates> {
             FirebaseAuth.instance.signInWithEmailAndPassword(
                 email: email,
                 password: password).then((value) {
+
                   emit(AppLoginSuccessState(value.user!.uid));
                   debugPrint(value.user!.uid);
                   }).catchError((error){
@@ -43,8 +45,9 @@ class AppLoginCubit extends Cubit<AppLoginStates> {
                    showError(error: error, context: context,color:Colors.red );
                   });
 
-
   }
+
+
   void createUser({
     required String name,
     required String  email,
@@ -95,8 +98,6 @@ class AppLoginCubit extends Cubit<AppLoginStates> {
   // }
 
 
-
-
   Future<UserCredential?> signInWithGoogle() async {
     emit(AppLoginLoadingState());
     // Trigger the authentication flow
@@ -140,13 +141,16 @@ class AppLoginCubit extends Cubit<AppLoginStates> {
 
   }
 
-  void userdata() {
 
-  final userData = FirebaseAuth.instance.currentUser;
-  createUser(
-      name: userData!.displayName.toString(),
-      email: userData.email.toString(), userId: FirebaseAuth.instance.currentUser!.uid);
-}
+
+
+//   void userdata() {
+//
+//   final userData = FirebaseAuth.instance.currentUser;
+//   createUser(
+//       name: userData!.displayName.toString(),
+//       email: userData.email.toString(), userId: FirebaseAuth.instance.currentUser!.uid);
+// }
 
 
 

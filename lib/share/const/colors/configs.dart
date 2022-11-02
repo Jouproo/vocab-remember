@@ -35,8 +35,8 @@ const kBackgroundColor =Colors.grey;
 
 const kMeaningTextStyle = TextStyle(
     fontFamily: 'Montserrat',
-    fontWeight: FontWeight.w500,
-    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    fontSize: 19,
     color: Colors.black);
 
 const kCardTextStyle = TextStyle(
@@ -45,3 +45,7 @@ const kCardTextStyle = TextStyle(
   fontWeight: FontWeight.w600,
   color: Color(kPrimaryColor),
 );
+
+String capitalize(String word) {
+  return word[0].toUpperCase() + word.substring(1);
+}

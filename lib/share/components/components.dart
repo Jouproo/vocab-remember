@@ -1,4 +1,5 @@
 
+import 'package:esaam_vocab/model/word_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -64,111 +65,218 @@ Widget defaultTextFormField(
 // onDismissed: (direction){
 // LayoutCubit.get(context).deleteData(id: model['id']);
 // },
-  Widget wordItemBuild(Map model,context,index) => Dismissible(
-    key: Key(model['id'].toString()),
 
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
+
+
+Widget allWordItemBuild(WordModel model,context,index) => Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
+  child: Align(
+   alignment: AlignmentDirectional.topStart,
+    child: Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: const BorderRadiusDirectional.only(
+          bottomEnd: Radius.circular(
+            05.0,
+          ),
+          topStart: Radius.circular(
+            05.0,
+          ),
+          topEnd: Radius.circular(
+            05.0,
+          ),
+        ),
+      ),
+      // padding: const EdgeInsets.symmetric(
+      //   vertical: 02.0,
+      //   horizontal: 08.0,
+      // ),
       child: Column(
         children: [
-          InkWell(
-            key: Key(model['id'].toString()),
-            onTap: (){
-             // LayoutCubit.get(context).updateData(item: 'definitionStatus',status: 'true', id: model['id']);
-              LayoutCubit.get(context). changeShowDefinition(id:model['id'],index: index ,);
-            },
-            child: Align(
-              alignment: AlignmentDirectional.topStart,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: const BorderRadiusDirectional.only(
-                    bottomEnd: Radius.circular(
-                      05.0,
-                    ),
-                    topStart: Radius.circular(
-                      05.0,
-                    ),
-                    topEnd: Radius.circular(
-                      05.0,
-                    ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '${model.wordText}',
+                  style: const TextStyle(fontSize: 20 ,
+                      fontWeight: FontWeight.bold ),
+                ),
+              ),
+              IconButton(
+                onPressed: ()
+                {
+              //    AppCubit.get(context).changeFavorite(id: model.uId, index: index);
+                  // LayoutCubit.get(context).updateData(
+                  //   status: 'favorite',
+                  //   id: model['id'],
+                  //   item: 'status'
+                  // );
+
+                },
+                icon:  Icon(
+                  Icons.favorite,
+                  color: Colors.red[700],
+                 // model['status']=='new'? Colors.grey :
+                  size: 25,
+                ),
+              ),
+              IconButton(
+                onPressed: ()
+                {
+                  // AppCubit.get(context).deleteData(id: model['id']);
+                },
+                icon:  const Icon(
+                  Icons.delete_outline,
+                  color: Colors.blueAccent,
+                  size: 25,
+                ),
+              ),
+
+
+            ],
+          ),
+
+         // if(model['definition'] != '')
+          if(model.definitionText != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  // LayoutCubit.get(context).words
+                  child: Text(
+                    ' ${model.definitionText}',
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 02.0,
-                  horizontal: 08.0,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${model['word']}',
-                        style: const TextStyle(fontSize: 18 ,
-                            fontWeight: FontWeight.bold ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: ()
-                      {
-                        LayoutCubit.get(context).changeFavorite(id: model['id'], index: index);
-                        // LayoutCubit.get(context).updateData(
-                        //   status: 'favorite',
-                        //   id: model['id'],
-                        //   item: 'status'
-                        // );
-
-                      },
-                      icon:  Icon(
-                        Icons.favorite,
-                        color:model['status']=='new'? Colors.grey : Colors.red[700],
-                        size: 25,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: ()
-                      {
-                        LayoutCubit.get(context).deleteData(id: model['id']);
-
-
-                      },
-                      icon:  const Icon(
-                        Icons.delete_outline,
-                        color: Colors.blueAccent,
-                        size: 25,
-                      ),
-                    ),
-
-
-                  ],
-                ),
               ),
-
-            ),
-          ),
-
-                if(model['definition'] != '')
-          if(model['definitionStatus'] == 'true')
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Align(
-              alignment: AlignmentDirectional.topStart,
-                   // LayoutCubit.get(context).words
-              child: Text(
-                'definition : ${model['definition']}',
-                style: const TextStyle(fontSize: 15 ,
-                    fontWeight: FontWeight.bold ),
-              ),
-            ),
-          ),
 
         ],
       ),
     ),
-    onDismissed: (direction){
-      LayoutCubit.get(context).deleteData(id: model['id']);
+  ),
+);
+//Key(model.uId.toString()),
+
+Widget allWordsBuilder({required List<WordModel> allWords}) => ListView.separated(
+    shrinkWrap:true ,
+
+    physics: const ScrollPhysics(),
+    itemBuilder: (context , index){
+      return allWordItemBuild(allWords[index],context, index);
     },
-  );
+    separatorBuilder: (context, index) => Container(
+      width: double.infinity,
+      height: 0.0,
+      color: Colors.grey[300],
+    ),
+    itemCount: allWords.length
+);
+
+Widget wordItemBuild(Map model,context,index) => Dismissible(
+  key: Key(model['id'].toString()),
+
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
+    child: Column(
+      children: [
+        InkWell(
+          key: Key(model['id'].toString()),
+          onTap: (){
+            // LayoutCubit.get(context).updateData(item: 'definitionStatus',status: 'true', id: model['id']);
+            AppCubit.get(context). changeShowDefinition(id:model['id'],index: index ,);
+          },
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: const BorderRadiusDirectional.only(
+                  bottomEnd: Radius.circular(
+                    05.0,
+                  ),
+                  topStart: Radius.circular(
+                    05.0,
+                  ),
+                  topEnd: Radius.circular(
+                    05.0,
+                  ),
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 02.0,
+                horizontal: 08.0,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${model['word']}',
+                      style: const TextStyle(fontSize: 18 ,
+                          fontWeight: FontWeight.bold ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: ()
+                    {
+                      AppCubit.get(context).changeFavorite(id: model['id'], index: index);
+                      // LayoutCubit.get(context).updateData(
+                      //   status: 'favorite',
+                      //   id: model['id'],
+                      //   item: 'status'
+                      // );
+
+                    },
+                    icon:  Icon(
+                      Icons.favorite,
+                      color:model['status']=='new'? Colors.grey : Colors.red[700],
+                      size: 25,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: ()
+                    {
+                      AppCubit.get(context).deleteData(id: model['id']);
+
+
+                    },
+                    icon:  const Icon(
+                      Icons.delete_outline,
+                      color: Colors.blueAccent,
+                      size: 25,
+                    ),
+                  ),
+
+
+                ],
+              ),
+            ),
+
+          ),
+        ),
+
+        if(model['definition'] != '')
+          if(model['definitionStatus'] == 'true')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Align(
+                alignment: AlignmentDirectional.topStart,
+                // LayoutCubit.get(context).words
+                child: Text(
+                  'definition : ${model['definition']}',
+                  style: const TextStyle(fontSize: 15 ,
+                      fontWeight: FontWeight.bold ),
+                ),
+              ),
+            ),
+
+      ],
+    ),
+  ),
+  onDismissed: (direction){
+    AppCubit.get(context).deleteData(id: model['id']);
+  },
+);
 
   Widget wordsBuilder({required List<Map> words}) => ListView.separated(
       itemBuilder: (context , index){
@@ -181,6 +289,7 @@ Widget defaultTextFormField(
       ),
       itemCount: words.length
   );
+
 void navigateTo(context, widget)=>  Navigator.push(context,
     MaterialPageRoute(builder: (context)=> widget));
 

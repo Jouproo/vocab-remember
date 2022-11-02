@@ -12,10 +12,10 @@ class FavoritesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LayoutCubit,LayoutStates>(
+    return BlocConsumer<AppCubit,AppStates>(
         listener: (context, state){},
         builder: (context, state) {
-          LayoutCubit cubit = LayoutCubit.get(context);
+          AppCubit cubit = AppCubit.get(context);
           return  Scaffold(
             appBar: AppBar(
               elevation: 0.0,

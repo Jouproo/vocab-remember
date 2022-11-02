@@ -1,23 +1,26 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esaam_vocab/layout/cubit/states.dart';
+import 'package:esaam_vocab/model/word_model.dart';
 import 'package:esaam_vocab/module/Words/words_screen.dart';
 import 'package:esaam_vocab/module/favorites/favorites_screen.dart';
 import 'package:esaam_vocab/module/photos/photos_screen.dart';
 import 'package:esaam_vocab/share/const/appassets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../model/user_model.dart';
 import '../../module/home/home_screen.dart';
 
-class LayoutCubit  extends Cubit<LayoutStates>{
+class AppCubit  extends Cubit<AppStates>{
 
-  LayoutCubit(): super(AppInitialState()) ;
+  AppCubit(): super(AppInitialState()) ;
 
 
-  static LayoutCubit get(context) => BlocProvider.of(context);
+  static AppCubit get(context) => BlocProvider.of(context);
 
 
 
@@ -194,8 +197,108 @@ class LayoutCubit  extends Cubit<LayoutStates>{
     return NetworkImage(imageUrl);
   }
 
+  String getName() {
+    final name =  FirebaseAuth.instance.currentUser!.displayName;
+    if (name == null) {
+      return ' ' ;
+    }
+   // emit(AppGetNameSuccessState());
+    return name;
+  }
+
+  UsersModel ? userModel;
+
+    void getUserData(){
+
+      emit(AppGetUserLoadingState());
+
+      FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+          .get().then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+     // print('Document data: ${documentSnapshot.data()}');
+      userModel = UsersModel.fromJson(documentSnapshot.data()! as Map<String, dynamic>);
+      print(userModel!.toMap().toString());
+      emit(AppGetUserSuccessState());
+
+      } else {
+      print('Document does not exist on the database');
+      }
+      });
+    }
+
+  void createNewWord ({
+    String ? dateTime,
+    required String ? wordText,
+    required String ? definitionText,
+     String ? level,
+    String ? session ,
+
+   }){
+       emit(AppCreateWordLoadingState());
+      WordModel model = WordModel(
+        name:userModel?.name,
+        uId: userModel?.uId,
+        dateTime: dateTime,
+        wordText: wordText,
+        definitionText: definitionText,
+        isFavorite: isFavorite,
+        level: level,
+        session: session
+      );
+
+     FirebaseFirestore.instance.collection('Words').add(model.toMap()).then((value) {
+       getWords();
+       debugPrint(value.toString());
+       emit(AppCreateWordSuccessState());
+     });
+  }
 
 
+  List<WordModel>  allWords = [];
+  void getWords(){
+    allWords = [];
+    FirebaseFirestore.instance.collection('Words').orderBy('dateTime').get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
+
+      });
+      emit(AppGetWordSuccessState());
+      debugPrint(' allWords  ${allWords.length}  ');
+       debugPrint(allWords[1].toMap().toString());
+    }).catchError((e){
+      debugPrint(e.toString());
+       emit(AppGetWordErrorState());
+    });
+
+
+
+  }
+
+
+
+  // final moviesRef = FirebaseFirestore.instance.collection('word').withConverter<WordModel>(
+  //   fromFirestore: (snapshot, _) => WordModel.fromJson(snapshot.data()!),
+  //   toFirestore: (wordModel, _) => wordModel.toMap(),
+  // );
+  //
+  // Future<void> getMod() async {
+  //   // Obtain science-fiction movies
+  //   List<QueryDocumentSnapshot<WordModel>> word = await moviesRef
+  //       .get()
+  //       .then((snapshot) => snapshot.docs);
+  //
+  //   // Add a movie
+  //   await moviesRef.add(
+  //     WordModel(
+  //         wordText: 'play  football',
+  //       definitionText: 'to play'
+  //     ),
+  //   );
+  //
+  //   // Get a movie with the id 42
+  //   //WordModel word1 = await moviesRef.doc('42').get().then((snapshot) => snapshot.data()!);
+  // }
 
 
 

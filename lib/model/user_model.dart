@@ -1,11 +1,8 @@
 class UsersModel {
 
-  String ? name;
-
+  String  ? name ;
   String ? email;
-
   String ? phone;
-
   String ? uId;
   String ? image;
   String ? cover;
@@ -14,7 +11,7 @@ class UsersModel {
   bool ? isEmailVerified;
 
   UsersModel({
-    this.name,
+     this.name,
     this.email,
     this.phone,
     this.uId,

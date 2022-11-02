@@ -24,7 +24,7 @@ class AppLoginScreen extends StatelessWidget {
   var  passwordController = TextEditingController();
   var  nameController = TextEditingController();
   var formKey = GlobalKey<FormState>();
-
+     String ? email ,  password ;
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +86,9 @@ class AppLoginScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 20,),
                                 BottomBarTextField(
-                                  controller: emailController,
+                                  //controller: emailController,
                                   onChanged: (String value){
+                                    email = value ;
                                     debugPrint(value);
                                   },
                                   errorText:'email is Empty ',
@@ -106,8 +107,9 @@ class AppLoginScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 20,),
                                 BottomBarTextField(
-                                  controller: passwordController,
+                                //  controller: passwordController,
                                   onChanged: (String value){
+                                    password =value ;
                                     debugPrint(value);
                                   },
                                   errorText:'Password is Empty ',
@@ -138,8 +140,8 @@ class AppLoginScreen extends StatelessWidget {
                                       if(formKey.currentState!.validate()){
                                         cubit.userLogin(
                                             context: context,
-                                            email: emailController.text,
-                                            password: passwordController.text
+                                            email: email!,
+                                            password: password!
                                         );
 
                                       }

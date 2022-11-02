@@ -1,11 +1,16 @@
 import 'package:bloc/bloc.dart';
+import 'package:esaam_vocab/layout/cubit/layout_screen.dart';
 import 'package:esaam_vocab/share/bloc_observer.dart';
 import 'package:esaam_vocab/share/cash/cash_helper.dart';
+import 'package:esaam_vocab/user_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'layout/cubit/layout_screen.dart';
+import 'layout/cubit/layout_cubit.dart';
+import 'layout/cubit/states.dart';
+import 'module/Words/words_screen.dart';
 import 'module/home/home_screen.dart';
 import 'module/login/app_login_screen.dart';
 import 'module/register/app_register_screen.dart';
@@ -27,29 +32,43 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme:
-      // ThemeData.light().copyWith(
-      //   primaryColor: const Color(0xFF42A5F5),
-      // ),
-      ThemeData(
-        primaryColor:const Color(0xFF42A5F5),
-       // primarySwatch: Colors.blue,
-      scaffoldBackgroundColor: Colors.white,
-       appBarTheme: const AppBarTheme(
-         backgroundColor: Colors.white,
-       systemOverlayStyle: SystemUiOverlayStyle(
-         statusBarColor: Colors.white,
-         statusBarIconBrightness: Brightness.dark,
+    return BlocProvider
+      (
+      create: (context) => AppCubit(),
+      child: BlocConsumer<AppCubit,AppStates>(
+        listener: (states,context){
 
-       ),
-           ) ,
+        },
+              builder:(states,context){
+                return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  theme:
+                  // ThemeData.light().copyWith(
+                  //   primaryColor: const Color(0xFF42A5F5),
+                  // ),
+                  ThemeData(
+                    primaryColor:const Color(0xFF42A5F5),
+                    // primarySwatch: Colors.blue,
+                    scaffoldBackgroundColor: Colors.white,
+                    appBarTheme: const AppBarTheme(
+                      backgroundColor: Colors.white,
+                      systemOverlayStyle: SystemUiOverlayStyle(
+                        statusBarColor: Colors.white,
+                        statusBarIconBrightness: Brightness.dark,
+
+                      ),
+                    ) ,
 
 
+                  ),
+                  home: HomeScreen(),
+                );
+              },
       ),
-      home:   SplashScreen(),
     );
+
+
+
   }
 }
 

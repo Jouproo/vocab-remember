@@ -15,7 +15,7 @@ class BottomBarTextField extends StatefulWidget {
   final bool  Function(String) ? validator;
   final String ? errorText;
   final double ?  radius ;
-  final TextEditingController ? controller ;
+ // final TextEditingController ? controller ;
 
 
    BottomBarTextField(
@@ -30,7 +30,7 @@ class BottomBarTextField extends StatefulWidget {
         this.errorText,
         this.radius = 10,
         required this.onChanged,
-        required this.controller
+       // required this.controller
       });
 
   @override
@@ -39,13 +39,14 @@ class BottomBarTextField extends StatefulWidget {
 
 class _BottomBarTextFieldState extends State<BottomBarTextField> {
   bool visibleIcon = false;
-
-
+  TextEditingController controller = TextEditingController();
   @override
   void dispose() {
     super.dispose();
-    widget.controller!.clear();
-    widget.controller!.dispose();
+   // widget.
+    controller.clear();
+  //  widget.
+    controller.dispose();
   }
 
   @override
@@ -61,7 +62,7 @@ class _BottomBarTextFieldState extends State<BottomBarTextField> {
           }
           return null;
         },
-        controller: widget.controller,
+        controller:controller,
         onChanged: (value) {
           widget.onChanged!(value);
         },
@@ -70,7 +71,7 @@ class _BottomBarTextFieldState extends State<BottomBarTextField> {
           hintText: widget.hint,
           labelText:widget.label! ,
           errorText:
-              (widget.validator != null && !widget.validator!(widget.controller!.text))
+              (widget.validator != null && !widget.validator!(controller.text))
                   ? widget.errorText
                   : null,
           prefixIcon: widget.icon,

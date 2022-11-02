@@ -31,3 +31,5 @@ class AppUserCreateErrorState extends AppLoginStates
 
   AppUserCreateErrorState(this.error);
 }
+class AppGetNameSuccessState extends AppLoginStates
+{}
