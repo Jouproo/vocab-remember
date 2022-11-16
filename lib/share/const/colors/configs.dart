@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 const kPrimaryColor = 0xFF42A5F5;
 const kDismissColor = Colors.red;
-const kLightBlack = Colors.black12;
-
+const kLightBlack = Colors.black54;
+const iconGray = Colors.grey;
 const kSmallTextStyle = TextStyle(
   fontFamily: 'Montserrat',
   fontWeight: FontWeight.w400,
@@ -28,6 +28,8 @@ const kCustomCardWordTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 17.0,
   fontFamily: 'Montserrat',
+
+
 );
 
 const kBackgroundColor =Colors.grey;
@@ -36,16 +38,28 @@ const kBackgroundColor =Colors.grey;
 const kMeaningTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     fontWeight: FontWeight.w600,
-    fontSize: 19,
+    fontSize: 21,
     color: Colors.black);
 
 const kCardTextStyle = TextStyle(
   fontFamily: 'Montserrat',
-  fontSize: 24.0,
+  fontSize: 22.0,
   fontWeight: FontWeight.w600,
-  color: Color(kPrimaryColor),
+  color: Colors.black
+  //Color(kPrimaryColor),
+);
+
+const wCardTextStyle = TextStyle(
+    fontFamily: 'Montserrat',
+    fontSize: 24.0,
+    fontWeight: FontWeight.w600,
+    color: Colors.white
+  //Color(kPrimaryColor),
 );
 
 String capitalize(String word) {
   return word[0].toUpperCase() + word.substring(1);
 }
+
+
+String ? uId = '';

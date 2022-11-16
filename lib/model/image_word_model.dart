@@ -1,51 +1,51 @@
 
-class WordModel {
+class ImageWordModel {
 
   String ? name;
   String ? uId;
   String ? dateTime;
-  String ? wordText;
   String ? definitionText;
-  bool ? isFavorite ;
   String ? level ;
   String ? session ;
   String ? wId;
+  String ? image;
+  String ? wordImage;
 
-  WordModel({
+  ImageWordModel({
     this.name,
-    this.isFavorite,
     this.uId,
-    this.wordText,
     this.dateTime,
     this.definitionText,
     this.level,
     this.session,
-    this.wId
+    this.wId,
+    this.image,
+    this.wordImage
   });
 
-  WordModel.fromJson(Map<String,dynamic>json){
+  ImageWordModel.fromJson(Map<String,dynamic>json){
     name = json['name'];
     uId = json['uId'];
     wId = json['wId'];
-    wordText = json['text'];
     definitionText = json['definitionText'];
     dateTime = json['dateTime'];
-    isFavorite = json['isFavorite'];
     level = json['level'];
     session = json['session'];
+    image = json['image'];
+    wordImage = json['wordImage'];
   }
 
   Map<String,dynamic> toMap(){
     return {
       'name':name,
       'uId' : uId,
-      'text':wordText,
       'dateTime' : dateTime,
       'definitionText' : definitionText ,
-      'isFavorite' : isFavorite ,
       'session': session,
       'level' : level,
-      'wId':wId
+      'wId':wId,
+      'image':image,
+      'wordImage':wordImage
     };
   }
 

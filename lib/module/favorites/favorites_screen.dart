@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../share/components/components.dart';
-import '../../share/const/appassets.dart';
-import '../../share/const/colors/configs.dart';
+
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({Key? key}) : super(key: key);
@@ -31,7 +30,9 @@ class FavoritesScreen extends StatelessWidget {
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: wordsBuilder(words: cubit.favorites),
+                    child:
+                    //Text('${cubit.words.length}'),
+                     wordsBuilder(words: cubit.favorites),
                   ),
                 )
             ),

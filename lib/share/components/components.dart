@@ -1,6 +1,12 @@
 
+import 'package:animations/animations.dart';
+import 'package:esaam_vocab/layout/layout_screen.dart';
 import 'package:esaam_vocab/model/word_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -41,8 +47,7 @@ Widget defaultTextFormField(
       decoration:   InputDecoration(
         border: OutlineInputBorder( borderRadius: BorderRadius.all(Radius.circular(radius))),
         prefixIcon: Icon(prefix,),
-        suffixIcon:
-        IconButton(
+        suffixIcon: IconButton(
             onPressed: (){
               suffixFunction!();
             },
@@ -61,184 +66,303 @@ Widget defaultTextFormField(
         onTap!();
       },
     );
+
+
+Widget searchTextField({
+   TextEditingController ? controller ,
+     Function? suffixFunction,
+     Function? prefixFunction,
+    IconData ? prefixIcon ,
+  required Function? onChang,
+   Function? onSubmitted,
+}) {
+  return  TextField(
+    controller: controller,
+    onChanged: (value){
+      onChang!(value);
+    },
+    onSubmitted: (value){
+      onSubmitted!();
+    },
+    autofocus: true, //Display the keyboard when TextField is displayed
+    cursorColor: Colors.blue,
+    style: const TextStyle(
+      color: Colors.black,
+      fontSize: 17,
+
+    ),
+    // textInputAction: TextInputAction.search, //Specify the action button on the keyboard
+    decoration:  InputDecoration(
+      suffixIcon: IconButton(onPressed: (){
+        suffixFunction!();
+      },
+          icon: const Icon(Icons.close)),
+         prefixIcon:IconButton(onPressed: (){
+           prefixFunction!();
+         },
+             icon:  Icon(prefixIcon)) ,
+      //Style of TextField
+      enabledBorder: const UnderlineInputBorder( //Default TextField border
+          borderSide: BorderSide(color: Colors.grey)
+      ),
+      focusedBorder: const UnderlineInputBorder( //Borders when a TextField is in focus
+          borderSide: BorderSide(color: Colors.white)
+      ),
+      hintText: 'Search', //Text that is displayed when nothing is entered.
+      hintStyle: TextStyle( //Style of hintText
+        color: Colors.grey,
+        fontSize: 20,
+      ),
+    ),
+  );
+}
+
+
          //Dismissible
 // onDismissed: (direction){
 // LayoutCubit.get(context).deleteData(id: model['id']);
 // },
-
+//SlidableAutoCloseBehavior
+// closeWhenOpened: true,
 
 
 Widget allWordItemBuild(WordModel model,context,index) => Padding(
   padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
-  child: Align(
-   alignment: AlignmentDirectional.topStart,
-    child: Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: const BorderRadiusDirectional.only(
-          bottomEnd: Radius.circular(
-            05.0,
-          ),
-          topStart: Radius.circular(
-            05.0,
-          ),
-          topEnd: Radius.circular(
-            05.0,
-          ),
-        ),
-      ),
-      // padding: const EdgeInsets.symmetric(
-      //   vertical: 02.0,
-      //   horizontal: 08.0,
-      // ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '${model.wordText}',
-                  style: const TextStyle(fontSize: 20 ,
-                      fontWeight: FontWeight.bold ),
-                ),
-              ),
-              IconButton(
-                onPressed: ()
-                {
-              //    AppCubit.get(context).changeFavorite(id: model.uId, index: index);
-                  // LayoutCubit.get(context).updateData(
-                  //   status: 'favorite',
-                  //   id: model['id'],
-                  //   item: 'status'
-                  // );
-
-                },
-                icon:  Icon(
-                  Icons.favorite,
-                  color: Colors.red[700],
-                 // model['status']=='new'? Colors.grey :
-                  size: 25,
-                ),
-              ),
-              IconButton(
-                onPressed: ()
-                {
-                  // AppCubit.get(context).deleteData(id: model['id']);
-                },
-                icon:  const Icon(
-                  Icons.delete_outline,
-                  color: Colors.blueAccent,
-                  size: 25,
-                ),
-              ),
-
-
-            ],
-          ),
-
-         // if(model['definition'] != '')
-          if(model.definitionText != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Align(
-                  alignment: AlignmentDirectional.topStart,
-                  // LayoutCubit.get(context).words
-                  child: Text(
-                    ' ${model.definitionText}',
-                  ),
-                ),
-              ),
-
-        ],
-      ),
-    ),
-  ),
-);
-//Key(model.uId.toString()),
-
-Widget allWordsBuilder({required List<WordModel> allWords}) => ListView.separated(
-    shrinkWrap:true ,
-
-    physics: const ScrollPhysics(),
-    itemBuilder: (context , index){
-      return allWordItemBuild(allWords[index],context, index);
-    },
-    separatorBuilder: (context, index) => Container(
-      width: double.infinity,
-      height: 0.0,
-      color: Colors.grey[300],
-    ),
-    itemCount: allWords.length
-);
-
-Widget wordItemBuild(Map model,context,index) => Dismissible(
-  key: Key(model['id'].toString()),
-
-  child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
-    child: Column(
+  child: Slidable(
+    key: Key(model.uId.toString()),
+    startActionPane:  ActionPane(
+      dismissible: DismissiblePane(onDismissed: () {
+        AppCubit.get(context).removeWord(wId: model.wId.toString(),rUid:model.uId.toString());
+      }),
+        extentRatio: 1/1,
+      motion:const ScrollMotion(),
       children: [
-        InkWell(
-          key: Key(model['id'].toString()),
-          onTap: (){
-            // LayoutCubit.get(context).updateData(item: 'definitionStatus',status: 'true', id: model['id']);
-            AppCubit.get(context). changeShowDefinition(id:model['id'],index: index ,);
+        SlidableAction(
+          onPressed: (context){
+            AppCubit.get(context).insertToDatabase(
+              word: '${model.wordText}',
+              definition: ' ${model.definitionText}',
+              wId: '${model.wId}',
+              status: 'favorite'
+            );
           },
-          child: Align(
-            alignment: AlignmentDirectional.topStart,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: const BorderRadiusDirectional.only(
-                  bottomEnd: Radius.circular(
-                    05.0,
-                  ),
-                  topStart: Radius.circular(
-                    05.0,
-                  ),
-                  topEnd: Radius.circular(
-                    05.0,
-                  ),
-                ),
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.favorite,
+          label: 'Favorite',
+        ),
+         SlidableAction(
+
+          onPressed: (context){
+
+          AppCubit.get(context).removeWord(wId:model.wId.toString(),rUid:model.uId.toString());
+          },
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.delete,
+          label: 'Delete',
+
+        ),
+        SlidableAction(
+          onPressed: (context){
+            Clipboard.setData(ClipboardData(
+                text:'${model.wordText}' ));
+            Fluttertoast.showToast(msg: 'Text Copied To Clipboard');
+          },
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.content_copy,
+          label: 'Copy',
+        ),
+        const SlidableAction(
+          onPressed: doNothing,
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.close,
+          label: 'Close',
+        ),
+      ],
+    ),
+
+    child: Align(
+     alignment: AlignmentDirectional.topStart,
+      child: OpenContainer(
+
+        openBuilder: (context, action) {
+         return Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           Expanded(
+             child: Container(
+
+               width: MediaQuery.of(context).size.width,
+               decoration: BoxDecoration(
+                 color: Colors.grey[200],
+                // borderRadius: BorderRadius.circular(15.0),
+               ),
+             ),
+           ),
+           Expanded(
+             child: Container(
+               padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+               margin: const EdgeInsets.symmetric(vertical: 10.0),
+               width: MediaQuery.of(context).size.width,
+               decoration: BoxDecoration(
+                 color:
+                 const Color(0xFF42A5F5),
+               // Colors.blue,
+                // Theme.of(context).primaryColor,
+                 borderRadius: BorderRadius.circular(15.0),
+               ),
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 mainAxisSize: MainAxisSize.min,
+                 children: [
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     crossAxisAlignment: CrossAxisAlignment.center,
+                     children: [
+                       Text(
+                         capitalize('${model.wordText}'),
+                         style: wCardTextStyle,),
+                       Tooltip(
+                         message:  'Copy to clipboard' ,
+                         child: IconButton(
+                           padding: const EdgeInsets.all(0),
+                           onPressed: (){
+                             Clipboard.setData(ClipboardData(
+                                 text:'${model.wordText}' ));
+                             Fluttertoast.showToast(msg: 'Text Copied To Clipboard');
+                           },
+                           icon: const Icon(
+                             Icons.content_copy,
+                             size: 30.0,
+                             color: Colors.white,
+                           ),
+                         ),
+                       ),
+
+                     ],
+                   ),
+                   Text(
+                     '${model.definitionText}',
+                     style: kCustomCardWordTextStyle.copyWith(
+                       fontWeight: FontWeight.w400,
+                       fontSize: 16.0,
+                     ),
+                     overflow: TextOverflow.ellipsis,
+                     maxLines: 5,
+                   ),
+                   Expanded(
+                     child: Row(
+                        crossAxisAlignment:CrossAxisAlignment.end ,
+                       children: [
+                         Expanded(
+                           child: InkWell(
+                             onTap: (){
+                              // navigateTo(context, HomeScreen());
+                             },
+                             child: Text(
+                               '${model.level}',
+                               style: kCustomCardWordTextStyle.copyWith(fontSize: 16.0),
+                             ),
+                           ),
+                         ),
+                         Expanded(
+                           child: Text(
+                            '${model.name}',
+                             style: kCustomCardWordTextStyle.copyWith(fontSize: 16.0),
+                             overflow: TextOverflow.ellipsis,
+                             maxLines: 1,
+                           ),
+
+                         ),
+                         // Expanded(
+                         //        child:  IconButton(
+                         //          icon: const Icon(
+                         //            Icons.volume_up,
+                         //            color: Colors.white,
+                         //          ),
+                         //          onPressed: () async {
+                         //            // await WordAudio()
+                         //            //     .playAudio(homeProvider.wordOfTheDay['word']);
+                         //          },
+                         //        ),
+                         //      )
+                       ],
+                     ),
+                   )
+                 ],
+
+               ),
+             ),
+           ),
+           Expanded(
+             child: Container(
+
+               width: MediaQuery.of(context).size.width,
+               decoration: BoxDecoration(
+                 color: Colors.grey[200],
+                // borderRadius: BorderRadius.circular(15.0),
+               ),
+             ),
+           ),
+
+         ],
+           );
+
+        }, closedBuilder: ( context, action) {
+        return Container(
+          width: double.infinity,
+          decoration:  BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: const BorderRadiusDirectional.only(
+              bottomEnd: Radius.circular(
+                10.0,
               ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 02.0,
-                horizontal: 08.0,
+              topStart: Radius.circular(
+                10.0,
               ),
-              child: Row(
+              topEnd: Radius.circular(
+                10.0,
+              ),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(
+            vertical: 02.0,
+            horizontal: 08.0,
+          ),
+          child: Column(
+            children: [
+              Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      '${model['word']}',
-                      style: const TextStyle(fontSize: 18 ,
-                          fontWeight: FontWeight.bold ),
+                    child:  Text(
+                      capitalize('${model.wordText}'),
+                      style: kCardTextStyle,
                     ),
                   ),
                   IconButton(
                     onPressed: ()
                     {
-                      AppCubit.get(context).changeFavorite(id: model['id'], index: index);
-                      // LayoutCubit.get(context).updateData(
-                      //   status: 'favorite',
-                      //   id: model['id'],
-                      //   item: 'status'
-                      // );
-
+                      Clipboard.setData(ClipboardData(
+                          text:'${model.wordText}' ));
+                      Fluttertoast.showToast(msg: 'Text Copied To Clipboard');
                     },
-                    icon:  Icon(
-                      Icons.favorite,
-                      color:model['status']=='new'? Colors.grey : Colors.red[700],
-                      size: 25,
+                    icon:  const Icon(Icons.copy,
+                      color:  Colors.blue,
+                      // model['status']=='new'? Colors.grey :
+                      size: 24,
                     ),
                   ),
                   IconButton(
                     onPressed: ()
                     {
-                      AppCubit.get(context).deleteData(id: model['id']);
-
-
+                      AppCubit.get(context).removeWord(wId: model.wId.toString(),rUid:'${model.uId}');
                     },
                     icon:  const Icon(
                       Icons.delete_outline,
@@ -246,39 +370,217 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
                       size: 25,
                     ),
                   ),
-
-
                 ],
               ),
-            ),
-
-          ),
-        ),
-
-        if(model['definition'] != '')
-          if(model['definitionStatus'] == 'true')
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Align(
-                alignment: AlignmentDirectional.topStart,
-                // LayoutCubit.get(context).words
-                child: Text(
-                  'definition : ${model['definition']}',
-                  style: const TextStyle(fontSize: 15 ,
-                      fontWeight: FontWeight.bold ),
+              if(model.definitionText != null)
+                Align(
+                  alignment: AlignmentDirectional.topStart,
+                  // LayoutCubit.get(context).words
+                  child: Text(
+                    ' ${model.definitionText}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-            ),
 
-      ],
+            ],
+          ),
+        );
+      },
+
+      ),
     ),
   ),
+);
+//Key(model.uId.toString()),
+
+Widget allWordsBuilder({required List<WordModel> allWords}) => SlidableAutoCloseBehavior(
+  closeWhenOpened: true,
+  child:   ListView.separated(
+      physics: const ScrollPhysics(),
+      itemBuilder: (context , index){
+        return allWordItemBuild(allWords[index],context, index);
+      },
+      separatorBuilder: (context, index) => Container(
+        width: double.infinity,
+        height: 0.0,
+        color: Colors.grey[200],
+      ),
+      itemCount: allWords.length
+  ),
+);
+
+
+Widget wordItemBuild(Map model,context,index) => Dismissible(
+  key: Key(model['id'].toString()),
+
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
+    child: Align(
+      alignment: AlignmentDirectional.topStart,
+      child: OpenContainer(
+
+        openBuilder: (context, action) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Container(
+
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    // borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color:
+                    const Color(0xFF42A5F5),
+                    // Colors.blue,
+                    // Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            capitalize('${model['word']}'),
+                            style: wCardTextStyle,),
+                          Tooltip(
+                            message:  'Copy to clipboard' ,
+                            child: IconButton(
+                              padding: const EdgeInsets.all(0),
+                              onPressed: (){
+                                Clipboard.setData(ClipboardData(
+                                    text:'${model['word']}' ));
+                                Fluttertoast.showToast(msg: 'Text Copied To Clipboard');
+                              },
+                              icon: const Icon(
+                                Icons.content_copy,
+                                size: 30.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${model['definition']}',
+                        style: kCustomCardWordTextStyle.copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16.0,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 5,
+                      ),
+                    ],
+
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    // borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
+              ),
+
+            ],
+          );
+
+        }, closedBuilder: ( context, action) {
+        return Container(
+          width: double.infinity,
+          decoration:  BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: const BorderRadiusDirectional.only(
+              bottomEnd: Radius.circular(
+                10.0,
+              ),
+              topStart: Radius.circular(
+                10.0,
+              ),
+              topEnd: Radius.circular(
+                10.0,
+              ),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(
+            vertical: 02.0,
+            horizontal: 08.0,
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child:  Text(
+                      capitalize('${model['word']}'),
+                      style: kCardTextStyle,
+                    ),
+                  ),
+                  Icon(
+                    Icons.favorite,
+                    color:model['status']=='new'? Colors.grey : Colors.red[400],
+                    size: 25,
+                  ),
+                  IconButton(
+                    onPressed: ()
+                    {
+                      Clipboard.setData(ClipboardData(
+                          text:'${model['word']}' ));
+                      Fluttertoast.showToast(msg: 'Text Copied To Clipboard');
+                    },
+                    icon:  const Icon(Icons.copy,
+                      color:  Colors.blue,
+                      // model['status']=='new'? Colors.grey :
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+              if(model['definition'] != null)
+                Align(
+                  alignment: AlignmentDirectional.topStart,
+                  // LayoutCubit.get(context).words
+                  child: Text(
+                    '${model['definition']}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
+            ],
+          ),
+        );
+      },
+
+      ),
+    ),
+
+  ),
+
   onDismissed: (direction){
     AppCubit.get(context).deleteData(id: model['id']);
   },
 );
 
-  Widget wordsBuilder({required List<Map> words}) => ListView.separated(
+ Widget wordsBuilder({required List<Map> words}) => ListView.separated(
       itemBuilder: (context , index){
         return wordItemBuild(words[index],context, index);
       },
@@ -289,6 +591,58 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
       ),
       itemCount: words.length
   );
+
+
+Widget homeBuildItem (
+    {
+      required String image,
+      required String text,
+       // bool ? isSelected,
+      required VoidCallback onTap,
+      double ? fontSize = 18,
+      Color? unSelectedImageColor,
+    })=>    Expanded (
+  child: GestureDetector(
+    onTap: (){
+      onTap();
+    },
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        //gradient: isSelected ? appGradient : null,
+        color: ChooseColor.defaultBackgroundColor
+        // color: !isSelected! ? ChooseColor.defaultBackgroundColor : ChooseColor.defaultColor,
+        // color: !isSelected ? ChooseColor.defaultBackgroundColor: ChooseColor.defaultColor,
+        //!isSelected ? Colors.grey[100] : const Color(0xFF1A5276),
+      ),
+      child: Column(
+          children: [
+            AppSpaces.vertical15,
+            Center(
+              child: SizedBox(
+                width: Get.width/ 5,
+                height: Get.height / 10,
+                child:SvgPicture.asset(
+                  image,
+                  width: 250.0,
+                  // color: isSelected ? Colors.white :  Get.theme.primaryColor,
+                  //isSelected ? Colors.white : const Color(0xFF1A5276),
+                  // color: Colors.blueAccent,
+                ),
+              ),
+            ),
+            AppSpaces.vertical15,
+            Text(
+              text,
+              style: TextStyle(
+                // color:  isSelected ? Colors.white : Colors.black,
+                fontSize: fontSize , ),
+            ),
+            AppSpaces.vertical15,
+          ]),
+    ),
+  ),
+);
 
 void navigateTo(context, widget)=>  Navigator.push(context,
     MaterialPageRoute(builder: (context)=> widget));
@@ -363,7 +717,7 @@ Widget mainBuildItem (
       double ? fontSize = 18,
       Color? unSelectedImageColor,
     })=> Expanded (
-  child: GestureDetector(
+          child: GestureDetector(
     onTap: (){
       onTap();
     },
@@ -403,4 +757,4 @@ Widget mainBuildItem (
   ),
 );
 
-
+void doNothing(BuildContext context) {}

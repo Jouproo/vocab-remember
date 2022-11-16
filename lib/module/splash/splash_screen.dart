@@ -1,20 +1,25 @@
 import 'dart:async';
 
+import 'package:esaam_vocab/layout/layout_screen.dart';
 import 'package:esaam_vocab/module/login/app_login_screen.dart';
 import 'package:esaam_vocab/share/components/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../layout/cubit/layout_screen.dart';
-import '../../share/const/appassets.dart';
+import '../../share/cash/cash_helper.dart';
+
+
 
 class SplashScreen extends StatefulWidget {
+
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
 
   @override
   void initState() {
@@ -26,8 +31,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Timer(Duration(seconds: 3), timerDone);
   }
 
+
+
   void timerDone() {
-    navigateAndFinish(context, AppLoginScreen());
+    navigateAndFinish(context,(CashHelper.getData(key: 'uId')==null)? AppLoginScreen(): LayoutScreen() ) ;
     //navigateTo(context, HomeScreen());
   }
 
@@ -36,7 +43,6 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.blue,
          appBar: AppBar(
-
            backgroundColor: Colors.blue,
            elevation: 0.0,
              systemOverlayStyle: const SystemUiOverlayStyle(

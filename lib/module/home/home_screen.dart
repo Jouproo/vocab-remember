@@ -1,29 +1,37 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esaam_vocab/layout/cubit/states.dart';
+import 'package:esaam_vocab/module/yourWords/your_words_screen.dart';
+import 'package:esaam_vocab/share/const/appassets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../layout/cubit/layout_cubit.dart';
+import '../../share/components/components.dart';
 import '../../share/const/colors/configs.dart';
-
-class Layout extends  StatelessWidget {
-  const Layout({Key? key}) : super(key: key);
+import '../search/search_bar.dart';
 
 
 
+class HomeScreen extends  StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  void initState() {
+
+
+  }
   @override
   Widget build(BuildContext context) {
 
-    final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection('users').snapshots();
-
-
-
     return BlocConsumer<AppCubit,AppStates>
       (
+        listener: (states,context){
+          if(states is AppChangeBottomNavBarState){
+          }
+        },
         builder: (cubit,states){
       AppCubit cubit =  AppCubit.get(context) ;
-
       var userModel = AppCubit.get(context).userModel;
 
         return Scaffold(
@@ -37,9 +45,10 @@ class Layout extends  StatelessWidget {
                     children:  [
                       Expanded(
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 30.0),
-                          child: Text('Hi ${userModel?.name} '   ,
-                              style:kMeaningTextStyle),
+                          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                          child:(userModel?.name == null) ?Text('Hi ... ' ,
+                              style:kMeaningTextStyle): Text('Hi ${userModel?.name} ' ,
+                              style:kMeaningTextStyle)
                         ),
                       ),
                       CircleAvatar(
@@ -47,43 +56,95 @@ class Layout extends  StatelessWidget {
                         backgroundImage:AppCubit.get(context).getProfilePhoto(),
                         //  AssetImage(AppAssets.livingRoomImage),
                         backgroundColor: Colors.transparent,
-
-                      )
+                      ),
+                      IconButton(onPressed: (){
+                        cubit.changeSettingState();
+                      },
+                          icon:const Icon(Icons.settings)),
+                      // PopupMenuButton<String>(
+                      //   position: PopupMenuPosition.values.last,
+                      //   onSelected: (_) {},
+                      //   itemBuilder: (BuildContext context) {
+                      //     return [
+                      //       const PopupMenuItem(
+                      //         value: 'reset_likes',
+                      //         child: Text('setting'),
+                      //       ),
+                      //     ];
+                      //   },
+                      // ),
                     ],
                   ) ,
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(
-                          width: 0.5,
-                          color: kLightBlack,
+                  if(cubit.isSetting)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:  [
+                        Column(
+                          children: [
+                            IconButton(onPressed: (){
+                            }, icon: const Icon(Icons.brightness_medium_outlined)),
+                            const Text('Chang Mode' ,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.search,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {},
-                          ),
-                          const Text(
-                            'search',
-                            style: TextStyle(color: kBackgroundColor, fontSize: 17.0),
-                          ),
-                        ],
-                      ),
+                        Column(
+                          children: [
+                            IconButton(onPressed: (){
+                            }, icon: const Icon(Icons.edit_off)),
+                            const Text('Edit Profile' ,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red
+                              ),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(onPressed: (){
+                              cubit.signOut(context: context);
+                              },
+                                icon: const Icon(Icons.logout)),
+                            const Text('Logout' ,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold ,
+                                color: Colors.blue
+                              ),
+                            )
+                          ],
+                        ),
+                        // PopupMenuButton<String>(
+                        //   position: PopupMenuPosition.values.last,
+                        //   onSelected: (_) {},
+                        //   itemBuilder: (BuildContext context) {
+                        //     return [
+                        //       const PopupMenuItem(
+                        //         value: 'reset_likes',
+                        //         child: Text('setting'),
+                        //       ),
+                        //     ];
+                        //   },
+                        // ),
+                      ],
                     ),
-                  ),
+                  ) ,
+                   const SizedBox(
+                     height: 15.0,
+                   ),
+                  SearchBar(),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
                     margin: const EdgeInsets.symmetric(vertical: 20.0),
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.blue ,
+                      //Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                     child: Column(
@@ -142,12 +203,35 @@ class Layout extends  StatelessWidget {
                         )
                       ],
                     ),
+                  ),
+                  Row(
+                    children: [
+                      homeBuildItem(
+                        onTap:(){
+
+                        } ,
+                        image: AppAssets.note,
+                        text: 'phrases',
+                      ) ,
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      homeBuildItem(
+                        onTap:(){
+                          navigateTo(context, YourWordsScreen());
+                        } ,
+                        image: AppAssets.phrase1,
+                        text: 'Your Word ',
+                      )
+
+                    ],
+
                   )
                 ],
               )),
         );
     },
-        listener: (states,context){}
+
         );
 
 

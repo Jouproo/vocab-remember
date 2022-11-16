@@ -1,19 +1,30 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esaam_vocab/layout/cubit/states.dart';
 import 'package:esaam_vocab/model/word_model.dart';
 import 'package:esaam_vocab/module/Words/words_screen.dart';
 import 'package:esaam_vocab/module/favorites/favorites_screen.dart';
+import 'package:esaam_vocab/module/login/app_login_screen.dart';
 import 'package:esaam_vocab/module/photos/photos_screen.dart';
+import 'package:esaam_vocab/share/cash/cash_helper.dart';
+import 'package:esaam_vocab/share/components/components.dart';
 import 'package:esaam_vocab/share/const/appassets.dart';
+import 'package:esaam_vocab/share/const/colors/configs.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../model/image_word_model.dart';
 import '../../model/user_model.dart';
 import '../../module/home/home_screen.dart';
+import '../../try.dart';
 
 class AppCubit  extends Cubit<AppStates>{
 
@@ -22,13 +33,17 @@ class AppCubit  extends Cubit<AppStates>{
 
   static AppCubit get(context) => BlocProvider.of(context);
 
+  final auth = FirebaseAuth.instance;
+
+  final fireStore = FirebaseFirestore.instance;
+
 
 
   int currentIndex = 0;
 
   List <Widget> screens =
   [
-     Layout(),
+     HomeScreen(),
      WordsScreen(),
      FavoritesScreen(),
      PhotosScreen(),
@@ -58,6 +73,8 @@ class AppCubit  extends Cubit<AppStates>{
   }
 
 
+
+
   bool isFavorite = false ;
 
   void changeFavorite({required int id,required index}){
@@ -84,7 +101,7 @@ class AppCubit  extends Cubit<AppStates>{
         database.execute(
             'CREATE TABLE vocabulary ('
                 'id INTEGER PRIMARY KEY, word TEXT, definition TEXT, '
-                'name TEXT,status TEXT,definitionStatus TEXT )')
+                'name TEXT,wId TEXT,status TEXT,definitionStatus TEXT )')
             .then((value) {
           print('table created');
         }).catchError((error) {
@@ -105,12 +122,14 @@ class AppCubit  extends Cubit<AppStates>{
   Future<void> insertToDatabase({
    required String word,
     required String definition,
-    required String name,
+     String ? name,
+    String ? wId ,
+    required String  status
   }) async {
     await database!.transaction((txn) async {
       txn.rawInsert(
-        'INSERT INTO vocabulary(word, definition, name,status,definitionStatus)'
-            ' VALUES("$word", "$definition", "$name","new","false")',
+        'INSERT INTO vocabulary(word, definition, name,wId,status,definitionStatus)'
+            ' VALUES("$word", "$definition", "$name", "$wId","$status","false")',
       ).then((value) {
         print('$value inserted successfully');
         emit(AppInsertDatabaseState());
@@ -124,19 +143,17 @@ class AppCubit  extends Cubit<AppStates>{
 
   void getDataFromDatabase(database)
   {
-    words = [];
+   words = [];
     favorites = [];
-
-    //emit(AppGetDatabaseLoadingState());
-
+    emit(AppGetDatabaseLoadingState());
     database.rawQuery('SELECT * FROM vocabulary').then((value) {
 
       value.forEach((element)
       {
-          words.add(element);
-
           if(element['status'] == 'favorite'){
             favorites.add(element);
+          }else{
+            words.add(element);
           }
 
       });
@@ -175,6 +192,30 @@ class AppCubit  extends Cubit<AppStates>{
     });
   }
 
+   bool isEmpty = false ;
+
+  List<Map>  fav = [];
+
+   Future<List<Map<String, dynamic>>?> searchScoutsMap( String word,  String definition) async {
+    fav = [];
+    Database ? db = database;
+    print("This works? $db");
+    var result = await db?.rawQuery(
+        "SELECT * FROM vocabulary  WHERE word  Like '%$word%' AND definition Like '%$definition%'");
+    debugPrint("result is working? $result");
+        if(result!.isNotEmpty){
+             fav = result ;
+           }
+       return result;
+  }
+
+     bool addFavorite({
+       required String word ,
+       required String definition}) {
+
+      return true ;
+   }
+
   bool isBottomSheetShown = false;
   IconData fabIcon = Icons.edit;
 
@@ -190,7 +231,7 @@ class AppCubit  extends Cubit<AppStates>{
 
 
   ImageProvider<Object> getProfilePhoto() {
-    final imageUrl = FirebaseAuth.instance.currentUser!.photoURL;
+    final imageUrl = auth.currentUser?.photoURL;
     if (imageUrl == null) {
       return const AssetImage('icons/profile.png');
     }
@@ -198,7 +239,7 @@ class AppCubit  extends Cubit<AppStates>{
   }
 
   String getName() {
-    final name =  FirebaseAuth.instance.currentUser!.displayName;
+    final name =  auth.currentUser!.displayName;
     if (name == null) {
       return ' ' ;
     }
@@ -212,7 +253,7 @@ class AppCubit  extends Cubit<AppStates>{
 
       emit(AppGetUserLoadingState());
 
-      FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+      fireStore.collection('users').doc(auth.currentUser?.uid)
           .get().then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
      // print('Document data: ${documentSnapshot.data()}');
@@ -231,38 +272,62 @@ class AppCubit  extends Cubit<AppStates>{
     required String ? wordText,
     required String ? definitionText,
      String ? level,
-    String ? session ,
-
+    String ? session,
    }){
-       emit(AppCreateWordLoadingState());
-      WordModel model = WordModel(
-        name:userModel?.name,
-        uId: userModel?.uId,
-        dateTime: dateTime,
-        wordText: wordText,
-        definitionText: definitionText,
-        isFavorite: isFavorite,
-        level: level,
-        session: session
-      );
+    emit(AppCreateWordLoadingState());
+    CollectionReference words = fireStore.collection('Words');
+    final ref = fireStore.collection('Words').doc();
+    WordModel model = WordModel(
+      name:userModel?.name,
+      uId: userModel?.uId,
+      dateTime: dateTime,
+      wordText: wordText,
+      definitionText: definitionText,
+      isFavorite: isFavorite,
+      level: level,
+      session: session,
+      wId: ref.id
+    );
 
-     FirebaseFirestore.instance.collection('Words').add(model.toMap()).then((value) {
-       getWords();
-       debugPrint(value.toString());
-       emit(AppCreateWordSuccessState());
-     });
+// upload the data and include docID in it
+
+    words.doc(ref.id).set(model.toMap()).then((value) {
+     // model.wId=value.id;
+      print('id word  ${ref.id}');
+      // debugPrint(' id word ${value.id}');
+      getWords();
+      emit(AppCreateWordSuccessState());
+
+       }).catchError((e){
+         showToast(msg: e );
+         emit(AppCreateWordErrorState(e));
+    });
+     //   words.add(model.toMap()).then((value) {
+     //     model.wId=value.id;
+     //     print('id word  ${ words.firestore.collection('words').id}');
+     //     id = value.id ;
+     //    // debugPrint(' id word ${value.id}');
+     //   getWords();
+     //   debugPrint(value.toString());
+     //   emit(AppCreateWordSuccessState());
+     //    // print(' id word ${model.wId}');
+     // });
   }
 
 
   List<WordModel>  allWords = [];
+
   void getWords(){
     allWords = [];
-    FirebaseFirestore.instance.collection('Words').orderBy('dateTime').get()
+    fireStore.collection('Words').orderBy('dateTime').get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
+      //  debugPrint(doc.id);
         allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
-
       });
+      var seen = Set<String>();
+      List<WordModel> wor = allWords.where((words) => seen.add(words.wordText!)).toList();
+      print(wor);
       emit(AppGetWordSuccessState());
       debugPrint(' allWords  ${allWords.length}  ');
        debugPrint(allWords[1].toMap().toString());
@@ -271,36 +336,287 @@ class AppCubit  extends Cubit<AppStates>{
        emit(AppGetWordErrorState());
     });
 
+  }
+
+  void getLevelOrderWords({required String level}){
+    allWords = [];
+    fireStore.collection('Words')
+        .where('level', whereIn: [level]).orderBy('dateTime').get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        //  debugPrint(doc.id);
+        allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
+      });
+      emit(AppGetWordSuccessState());
+      debugPrint(' allWords  ${allWords.length}  ');
+      debugPrint(allWords[1].toMap().toString());
+    }).catchError((e){
+      debugPrint(e.toString());
+      emit(AppGetWordErrorState());
+    });
+
+  }
+
+
+  void removeWord({required String wId ,required String rUid}){
+     CollectionReference words = fireStore.collection('Words');
+     uId= CashHelper.getData(key: 'uId');
+     if(rUid==uId){
+       words.doc(wId).delete()
+           .then((value) {
+         emit(AppRemoveWordSuccessState());
+         getWords();
+         showToast(msg: 'success Deleted ');
+         debugPrint(" Deleted success");
+       }).catchError((error) {
+         emit(AppRemoveWordErrorState());
+         debugPrint("Failed to delete user: $error");
+       });
+     }else{
+       showToast(msg: 'Not allowed');
+     }
+}
+
+  List<WordModel>  allSearchWords = [];
+
+  void searchFromFirebase(String query)  {
+    allWords = [];
+      fireStore.collection('Words')
+        .orderBy('text')
+        .startAt([query])
+        .endAt([query+'\uf8ff'])
+        .get().then((QuerySnapshot querySnapshot) {
+       querySnapshot.docs.forEach((doc) {
+      //   allWords.where((element) => seen.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )));
+         allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
+       });
+
+      // var seen = Set<String>();
+      // List<WordModel> searchWords = allWords.where((words) => seen.add(words.wordText!)).toList();
+       print(allSearchWords);
+       emit(AppGetWordSuccessState());
+       debugPrint(' allWords  ${allSearchWords.length}  ');
+     }).catchError((e){
+       debugPrint(e.toString());
+       emit(AppGetWordErrorState());
+     });
+
+  }
+
+  void allWordsSearch({required String query, })  {
+    allSearchWords = [];
+    var matchNames =  allWords.where((element) =>element.wordText!.contains(query))
+        .map((e) => e );
+    //allWords.where(p => p["name"].contains(search)).map(p => p["name"]);
+    String result = "";
+    for (var element in matchNames) {
+      allSearchWords.add(element);
+      debugPrint(element.wordText);
+
+    }
+    debugPrint('${allSearchWords.length}');
+
+
+    debugPrint(result);
+       emit(AppGetWordSuccessState());
+
+  }
+
+  List<Map>  yourSearchWords = [];
+
+  void yourWordsSearch({required String query,})  {
+    yourSearchWords = [];
+    var matchNames =  words.where((element) =>element['word']!.contains(query))
+        .map((e) => e );
+    // words.where(p => p['word'].contains(query)).map(p => p["name"]);
+    for (var element in matchNames) {
+      yourSearchWords.add(element);
+      debugPrint(element['word']);
+    }
+    debugPrint('${yourSearchWords.length}');
+
+    emit(AppGetWordSuccessState());
+
+  }
+
+
+  bool isSearch = false ;
+
+  void changSearchState(){
+    isSearch = !isSearch ;
+    emit(ChangeSearchState());
+
+  }
+
+
+  void doFalseSearch(){
+    isSearch = false ;
+    emit(ChangeSearchState());
+
+  }
+
+  bool isSetting = false ;
+
+  void changeSettingState(){
+    isSetting = !isSetting ;
+    emit(ChangeSearchState());
+
+  }
+
+
+
+
+  Future<void> signOut({required BuildContext context}) async {
+    try {
+
+      await GoogleSignIn().signOut().then((value) {
+        CashHelper.removeData(key: 'uId');
+        emit(SinOutSuccessState());
+        navigateTo(context, AppLoginScreen());
+      });
+      await auth.signOut().then((value) {
+        emit(SinOutSuccessState());
+        navigateTo(context, AppLoginScreen());
+      });
+
+    } on Exception catch (e) {
+      emit(SinOutErrorState(e.toString()));
+      showToast(msg: 'Logout Is Not Success');
+      'Exception @signout: $e';
+    }
+  }
+
+
+  File ? wordImage;
+  var picker = ImagePicker();
+
+  Future<void> getImage({bool isCamera = false}) async {
+    final pickedFile = await picker.pickImage(
+      source: (isCamera)? ImageSource.camera : ImageSource.gallery,
+    );
+    if (pickedFile != null) {
+      wordImage = File(pickedFile.path);
+      emit(AppImagePickedSuccessState());
+    } else {
+      print('No image selected.');
+    emit(AppImagePickedErrorState());
+    }
+  }
+
+  void removeWordImage()
+  {
+    wordImage = null;
+    emit(SocialRemovePostImageState());
+  }
+
+
+  void createImageWord({
+    required String dateTime,
+     String ? definitionText,
+    String ? level,
+   required String  wordImage,
+
+  }) {
+    emit(AppCreateWordImageLoadingState());
+    CollectionReference words = fireStore.collection('WordImages');
+    final ref = fireStore.collection('WordImages').doc();
+
+    ImageWordModel model = ImageWordModel(
+      name: userModel!.name,
+      image: userModel!.image,
+      uId: userModel!.uId,
+      dateTime: dateTime,
+      wordImage: wordImage,
+      definitionText: definitionText ?? '',
+      level: level ?? '',
+      wId: ref.id
+    );
+
+    words.doc(ref.id).set(model.toMap()).then((value) {
+      // model.wId=value.id;
+      print('id word  ${ref.id}');
+       // debugPrint();
+      // getWords();
+      emit(AppCreateWordImageSuccessState());
+
+    }).catchError((e){
+      emit(AppCreateWordImageErrorState());
+      showToast(msg: e);
+    });
+
+  }
+
+  void uploadWordImage({
+    required String dateTime,
+     String ? text,
+     String ? level,
+  })
+  {
+    emit(AppCreateWordImageLoadingState());
+
+    firebase_storage.FirebaseStorage.instance.ref()
+        .child('wordImage/${Uri.file(wordImage!.path).pathSegments.last}')
+        .putFile(wordImage!)
+        .then((value) {
+      value.ref.getDownloadURL().then((value)
+      {
+        print(value);
+        createImageWord(
+          definitionText:text ,
+          dateTime: dateTime,
+          wordImage: value,
+          level: level
+        );
+      }).catchError((error)
+      {
+        debugPrint(error);
+      });
+    }).catchError((error)
+    {
+      emit(AppCreateWordImageErrorState());
+    });
+  }
+
+
+
+  List <ImageWordModel> wordImages = [];
+  List <String> postsId = [];
+
+  void getPosts()
+  {
+    wordImages=[];
+
+    FirebaseFirestore.instance.collection('posts').get().
+    then((value)
+    {
+      for (var element in value.docs) {
+        element.reference
+            .collection('likes')
+            .get()
+            .then((value)
+        {
+          likes.add(value.docs.length);
+          postsId.add(element.id);
+          print(element.id);
+          posts.add(PostModel.fromJson(element.data()));
+          print(' post length  ${posts.length}  ');
+        }).catchError((error){});
+      }
+     // emit(SocialGetPostsSuccessState());
+    }).catchError((error) {
+      print(error.toString());
+   //   emit(SocialGetPostsErrorState(error.toString()));
+    });
+  }
+
 
 
   }
 
 
 
-  // final moviesRef = FirebaseFirestore.instance.collection('word').withConverter<WordModel>(
-  //   fromFirestore: (snapshot, _) => WordModel.fromJson(snapshot.data()!),
-  //   toFirestore: (wordModel, _) => wordModel.toMap(),
-  // );
-  //
-  // Future<void> getMod() async {
-  //   // Obtain science-fiction movies
-  //   List<QueryDocumentSnapshot<WordModel>> word = await moviesRef
-  //       .get()
-  //       .then((snapshot) => snapshot.docs);
-  //
-  //   // Add a movie
-  //   await moviesRef.add(
-  //     WordModel(
-  //         wordText: 'play  football',
-  //       definitionText: 'to play'
-  //     ),
-  //   );
-  //
-  //   // Get a movie with the id 42
-  //   //WordModel word1 = await moviesRef.doc('42').get().then((snapshot) => snapshot.data()!);
-  // }
 
 
 
 
-}
+

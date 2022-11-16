@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../layout/cubit/layout_screen.dart';
+import '../../layout/layout_screen.dart';
 import '../../share/cash/cash_helper.dart';
 import '../../share/components/bottom_bar_textfield.dart';
 import '../../share/components/components.dart';
@@ -16,8 +16,8 @@ import 'cubit/cubit.dart';
 import 'cubit/states.dart';
 
 const loginSVG = 'icons/svgVectors/login.svg';
-
 const googleLogo = 'icons/svgVectors/googleLogo.svg';
+
 class AppLoginScreen extends StatelessWidget {
 
   var   emailController = TextEditingController();
@@ -39,7 +39,7 @@ class AppLoginScreen extends StatelessWidget {
                   value: state.uId
                   ).
                    then((value) {
-                     navigateAndFinish(context,  HomeScreen());
+                     navigateAndFinish(context,  LayoutScreen());
 
               });
               showToast(msg: 'Login success ',color: Colors.green);
@@ -95,10 +95,10 @@ class AppLoginScreen extends StatelessWidget {
                                   verMargin: 0.0,
                                   horMargin: 0.0,
                                   hint: 'Enter your email',
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.email,
                                     // FontAwesomeIcons.lock,
-                                    color: Theme.of(context).primaryColor,
+                                    color: iconGray,
                                   ),
                                   inputType: TextInputType.emailAddress,
                                   label: 'Email',
@@ -116,10 +116,11 @@ class AppLoginScreen extends StatelessWidget {
                                   verMargin: 0.0,
                                   horMargin: 0.0,
                                   hint: 'Enter your password',
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.lock,
                                     // FontAwesomeIcons.lock,
-                                    color: Theme.of(context).primaryColor,
+                                    color: iconGray
+                                    //Theme.of(context).primaryColor,
                                   ),
                                   inputType: TextInputType.visiblePassword,
                                   isPassword: true,
@@ -165,14 +166,6 @@ class AppLoginScreen extends StatelessWidget {
                                   child: GestureDetector(
                                     onTap: () async {
                                       cubit.signInWithGoogle();
-                                    //  cubit.userdata();
-                                      // final user =
-                                      // await cubit.signInWithGoogle(context: context);
-                                      // if (user != null) {
-                                      //  // FirestoreInterface().addUser();
-                                      //    navigateAndFinish(context, HomeScreen());
-                                      //
-                                      // }
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 12.0),

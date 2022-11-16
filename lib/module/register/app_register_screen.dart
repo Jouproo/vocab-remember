@@ -8,9 +8,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
 
-import '../../layout/cubit/layout_screen.dart';
+import '../../layout/layout_screen.dart';
 import '../../share/components/bottom_bar_textfield.dart';
 import '../../share/components/components.dart';
+import '../../share/const/appassets.dart';
 import '../../validators/password.dart';
 import 'cubit/cubit.dart';
 import 'cubit/states.dart';
@@ -34,12 +35,11 @@ class AppRegisterScreen extends StatelessWidget {
       child: BlocConsumer<AppRegisterCubit,AppRegisterStates>(
           listener: (context,state){
               if (state is AppUserCreateSuccessState){
-                navigateAndFinish(context,  HomeScreen());
+                navigateAndFinish(context,  LayoutScreen());
               }
-              // else if (state is AppRegisterErrorState){
-              //       showToast(msg: state.error);
-              // }
-
+              else if (state is AppRegisterErrorState){
+                    showToast(msg: state.error);
+              }
           },
           builder: (context,state){
             AppRegisterCubit cubit = AppRegisterCubit.get(context);
@@ -74,7 +74,7 @@ class AppRegisterScreen extends StatelessWidget {
                             children:   [
                               Center(
                                 child: SvgPicture.asset(
-                                  signUpSVG,
+                                  AppAssets.signUpSVG,
                                   width: 230.0,
                                   // color: Colors.blueAccent,
                                 ),

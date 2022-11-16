@@ -45,16 +45,26 @@ dependencies:
   dio: ^4.0.3
   fluttertoast: ^8.0.8
   carousel_slider: ^4.0.0
-  firebase_core: ^1.19.0
-  firebase_auth: ^3.6.0
-  cloud_firestore: ^3.4.6
+  firebase_core: ^2.1.1
+  firebase_auth: ^4.1.0
+  cloud_firestore: ^4.0.3
   image_picker: ^0.8.5+3
-  firebase_storage: ^10.3.7
+  firebase_storage: ^11.0.3
   get: ^4.6.1
   lottie: ^1.4.1
   google_sign_in: ^5.4.2
   font_awesome_flutter: ^10.2.1
   flutter_svg: ^1.1.5
+  animations: ^2.0.7
+  flutter_slidable: ^2.0.0
+  video_player: ^2.4.7
+
+
+
+
+
+#  firestore_search: ^0.1.8
+
 
 
 
@@ -67,7 +77,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -86,6 +96,12 @@ flutter:
     - icons/svgVectors/SignUp.svg
     - icons/svgVectors/login.svg
     - icons/svgVectors/googleLogo.svg
+    - icons/svgVectors/Prhase.svg
+    - icons/svgVectors/book.svg
+    - icons/svgVectors/phrase1.svg
+    - icons/svgVectors/hand.svg
+    - icons/svgVectors/notes.svg
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

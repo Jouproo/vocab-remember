@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 /// Requires that a Firestore emulator is running locally.
 /// See https://firebase.flutter.dev/docs/firestore/usage#emulator-usage
-bool shouldUseFirestoreEmulator = false;
+bool shouldUseFirestoreEmulator = true;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
