@@ -78,13 +78,11 @@ class YourWordsScreen extends StatelessWidget {
               elevation: 3.0,
             ),
             body:   SafeArea(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                      child: (cubit.isSearch) ? wordsBuilder(words:  cubit.yourSearchWords,):
-                      wordsBuilder(words:  cubit.words,)
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                    child: (cubit.isSearch) ? wordsBuilder(words:  cubit.yourSearchWords,):
+                    wordsBuilder(words:  cubit.words,)
 
-                  ),
                 )
             ),
             floatingActionButton: FloatingActionButton(

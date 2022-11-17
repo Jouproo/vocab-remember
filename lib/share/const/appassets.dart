@@ -1,8 +1,7 @@
 class AppAssets {
 
-  static const String livingRoomImage = 'icons/bg.jpg';
 
-  static const String garage = 'icons/garage.png';
+
   static const String loginSVG = 'icons/svgVectors/login.svg';
   static  const String googleLogo = 'icons/svgVectors/googleLogo.svg';
   static const String signUpSVG = 'icons/svgVectors/SignUp.svg';

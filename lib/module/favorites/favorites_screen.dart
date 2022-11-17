@@ -27,13 +27,14 @@ class FavoritesScreen extends StatelessWidget {
               ),
             ),
             body:   SafeArea(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child:
-                    //Text('${cubit.words.length}'),
-                     wordsBuilder(words: cubit.favorites),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child:
+                  //Text('${cubit.words.length}'),
+                   Align(
+                       alignment: Alignment.topRight,
+                       child: wordsBuilder(words: cubit.favorites)
+                   ),
                 )
             ),
 

@@ -1,8 +1,8 @@
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:esaam_vocab/layout/cubit/states.dart';
 import 'package:esaam_vocab/model/word_model.dart';
 import 'package:esaam_vocab/module/Words/words_screen.dart';
@@ -17,8 +17,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../model/image_word_model.dart';
@@ -71,8 +73,6 @@ class AppCubit  extends Cubit<AppStates>{
 
     emit(ChangeShowDefinition());
   }
-
-
 
 
   bool isFavorite = false ;
@@ -209,12 +209,7 @@ class AppCubit  extends Cubit<AppStates>{
        return result;
   }
 
-     bool addFavorite({
-       required String word ,
-       required String definition}) {
 
-      return true ;
-   }
 
   bool isBottomSheetShown = false;
   IconData fabIcon = Icons.edit;
@@ -258,11 +253,11 @@ class AppCubit  extends Cubit<AppStates>{
       if (documentSnapshot.exists) {
      // print('Document data: ${documentSnapshot.data()}');
       userModel = UsersModel.fromJson(documentSnapshot.data()! as Map<String, dynamic>);
-      print(userModel!.toMap().toString());
+      debugPrint(userModel!.toMap().toString());
       emit(AppGetUserSuccessState());
 
       } else {
-      print('Document does not exist on the database');
+      debugPrint('Document does not exist on the database');
       }
       });
     }
@@ -293,7 +288,7 @@ class AppCubit  extends Cubit<AppStates>{
 
     words.doc(ref.id).set(model.toMap()).then((value) {
      // model.wId=value.id;
-      print('id word  ${ref.id}');
+      debugPrint('id word  ${ref.id}');
       // debugPrint(' id word ${value.id}');
       getWords();
       emit(AppCreateWordSuccessState());
@@ -304,13 +299,13 @@ class AppCubit  extends Cubit<AppStates>{
     });
      //   words.add(model.toMap()).then((value) {
      //     model.wId=value.id;
-     //     print('id word  ${ words.firestore.collection('words').id}');
+     //     debugPrint('id word  ${ words.firestore.collection('words').id}');
      //     id = value.id ;
      //    // debugPrint(' id word ${value.id}');
      //   getWords();
      //   debugPrint(value.toString());
      //   emit(AppCreateWordSuccessState());
-     //    // print(' id word ${model.wId}');
+     //    // debugPrint(' id word ${model.wId}');
      // });
   }
 
@@ -325,9 +320,6 @@ class AppCubit  extends Cubit<AppStates>{
       //  debugPrint(doc.id);
         allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
       });
-      var seen = Set<String>();
-      List<WordModel> wor = allWords.where((words) => seen.add(words.wordText!)).toList();
-      print(wor);
       emit(AppGetWordSuccessState());
       debugPrint(' allWords  ${allWords.length}  ');
        debugPrint(allWords[1].toMap().toString());
@@ -393,7 +385,7 @@ class AppCubit  extends Cubit<AppStates>{
 
       // var seen = Set<String>();
       // List<WordModel> searchWords = allWords.where((words) => seen.add(words.wordText!)).toList();
-       print(allSearchWords);
+       debugPrint(allSearchWords.toString());
        emit(AppGetWordSuccessState());
        debugPrint(' allWords  ${allSearchWords.length}  ');
      }).catchError((e){
@@ -498,7 +490,7 @@ class AppCubit  extends Cubit<AppStates>{
       wordImage = File(pickedFile.path);
       emit(AppImagePickedSuccessState());
     } else {
-      print('No image selected.');
+      debugPrint('No image selected.');
     emit(AppImagePickedErrorState());
     }
   }
@@ -534,9 +526,9 @@ class AppCubit  extends Cubit<AppStates>{
 
     words.doc(ref.id).set(model.toMap()).then((value) {
       // model.wId=value.id;
-      print('id word  ${ref.id}');
+      debugPrint('id word  ${ref.id}');
        // debugPrint();
-      // getWords();
+      getWordImage();
       emit(AppCreateWordImageSuccessState());
 
     }).catchError((e){
@@ -560,7 +552,7 @@ class AppCubit  extends Cubit<AppStates>{
         .then((value) {
       value.ref.getDownloadURL().then((value)
       {
-        print(value);
+        debugPrint(value);
         createImageWord(
           definitionText:text ,
           dateTime: dateTime,
@@ -578,36 +570,81 @@ class AppCubit  extends Cubit<AppStates>{
   }
 
 
-
   List <ImageWordModel> wordImages = [];
   List <String> postsId = [];
 
-  void getPosts()
+  void getWordImage()
   {
     wordImages=[];
-
-    FirebaseFirestore.instance.collection('posts').get().
-    then((value)
-    {
-      for (var element in value.docs) {
-        element.reference
-            .collection('likes')
-            .get()
-            .then((value)
-        {
-          likes.add(value.docs.length);
-          postsId.add(element.id);
-          print(element.id);
-          posts.add(PostModel.fromJson(element.data()));
-          print(' post length  ${posts.length}  ');
-        }).catchError((error){});
+    fireStore.collection('WordImages').orderBy('dateTime').get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+          debugPrint(doc.id);
+        wordImages.add(ImageWordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
       }
-     // emit(SocialGetPostsSuccessState());
+      emit(AppGetWordImageSuccessState());
+      debugPrint(' wordImages  ${wordImages.length}  ');
+      debugPrint(wordImages[1].toMap().toString());
     }).catchError((error) {
-      print(error.toString());
-   //   emit(SocialGetPostsErrorState(error.toString()));
+      debugPrint(error.toString());
+      emit(AppGetWordImageErrorState());
     });
   }
+
+
+  void deleteWordImage({required String wId ,required String rUid ,required String wordImage}){
+    CollectionReference words = fireStore.collection('WordImages');
+    uId= CashHelper.getData(key: 'uId');
+    if(rUid==uId){
+      words.doc(wId).delete().then((value) {
+        firebase_storage.FirebaseStorage.instance.refFromURL(wordImage).delete();
+        emit(AppRemoveWordSuccessState());
+        getWordImage();
+        showToast(msg: 'success Deleted ');
+        debugPrint(" Deleted success");
+      }).catchError((error) {
+        emit(AppRemoveWordErrorState());
+        debugPrint("Failed to delete user: $error");
+      });
+    }else{
+      showToast(msg: 'Not allowed');
+    }
+  }
+
+
+  Future<void> downloadImage(String wordImage ) async {
+         emit(AppDownloadImageLoadingState());
+       final storage  = firebase_storage.
+       FirebaseStorage.instance.refFromURL(wordImage);
+       final url = wordImage ;
+       storage.getDownloadURL().toString();
+       final  name =  storage .name ;
+       debugPrint('url is   ${url}');
+     final tempDir = await getTemporaryDirectory();
+     final path = '${tempDir.path}/$name' ;
+     await Dio().download(url, path).then((value) {
+       emit(AppDownloadImageSuccessState());
+       GallerySaver.saveImage(path,toDcim: true);
+     }).catchError((onError){
+       emit(AppDownloadImageErrorState());
+       debugPrint(onError);
+     });
+
+
+
+    //First you get the documents folder location on the device...
+    // Directory appDocDir = await getApplicationDocumentsDirectory();
+    //Here you'll specify the file it should be saved as
+  //  File downloadToFile = File('${appDocDir.path}/downloaded-pdf.pdf');
+    //Here you'll specify the file it should download from Cloud Storage
+    // String fileToDownload = 'uploads/uploaded-pdf.pdf';
+
+    //Now you can try to download the specified file, and write it to the downloadToFile.
+
+     }
+
+
+
 
 
 

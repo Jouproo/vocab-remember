@@ -4,7 +4,9 @@ import 'package:esaam_vocab/layout/cubit/states.dart';
 import 'package:esaam_vocab/module/yourWords/your_words_screen.dart';
 import 'package:esaam_vocab/share/const/appassets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../layout/cubit/layout_cubit.dart';
 import '../../share/components/components.dart';
@@ -54,7 +56,6 @@ class HomeScreen extends  StatelessWidget {
                       CircleAvatar(
                         radius: 20.0,
                         backgroundImage:AppCubit.get(context).getProfilePhoto(),
-                        //  AssetImage(AppAssets.livingRoomImage),
                         backgroundColor: Colors.transparent,
                       ),
                       IconButton(onPressed: (){
@@ -154,8 +155,8 @@ class HomeScreen extends  StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text(
-                              'word_of_the_day',
+                             const Text(
+                              'Last word ',
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 24.0,
@@ -178,29 +179,48 @@ class HomeScreen extends  StatelessWidget {
                         const SizedBox(
                           height: 16.0,
                         ),
-                        Text(
-                          'Esaam Ready for you',
-                          style: kCustomCardWordTextStyle.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18.0,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                maxLines: 1,
+                                '${cubit.allWords[cubit.allWords.length-1].wordText}',
+                                style: kCustomCardWordTextStyle.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: ()
+                              {
+                                Clipboard.setData(ClipboardData(
+                                    text: '${cubit.allWords[cubit.allWords.length-1].wordText}' ));
+                                Fluttertoast.showToast(msg: 'Text Copied To Clipboard');
+                              },
+                              icon:  const Icon(Icons.copy,
+                                color:  Colors.white,
+                                // model['status']=='new'? Colors.grey :
+                                size: 24,
+                              ),
+                            ),
+                          ],
                         ),
+
                         const SizedBox(
                           height: 10,
                         ),
                         Text(
-                          'be patient',
+                          maxLines: 4,
+                          '${cubit.allWords[cubit.allWords.length-1].definitionText}',
                           style: kCustomCardWordTextStyle.copyWith(fontSize: 16.0),
                         ),
+
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
 
-                          ],
-                        )
                       ],
                     ),
                   ),

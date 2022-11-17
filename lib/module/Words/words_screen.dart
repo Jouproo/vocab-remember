@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esaam_vocab/layout/cubit/layout_cubit.dart';
 import 'package:esaam_vocab/layout/cubit/states.dart';
 import 'package:esaam_vocab/module/Words/word_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -37,7 +38,6 @@ class WordsScreen extends StatelessWidget {
           AppCubit cubit = AppCubit.get(context);
 
           return Scaffold(
-
               appBar: AppBar(
                 elevation: 1.0 ,
                 title: (cubit.isSearch) ? searchTextField(
@@ -170,12 +170,15 @@ class WordsScreen extends StatelessWidget {
                              topRight: Radius.circular(30),
                            ),
                          ),
-                         child: Padding(
-                           padding: const EdgeInsets.all(06.0),
+                         child: Align(
+                           alignment: Alignment.topCenter,
+                           child: Padding(
+                             padding: const EdgeInsets.all(06.0),
 
-                           child: (cubit.isSearch)? allWordsBuilder(allWords: cubit.allSearchWords,):
-                           allWordsBuilder(allWords: cubit.allWords,)
-                           ,
+                             child: (cubit.isSearch)? allWordsBuilder(allWords: cubit.allSearchWords,):
+                             allWordsBuilder(allWords: cubit.allWords,)
+                             ,
+                           ),
                          ),
                        ),
                      ),
@@ -279,85 +282,7 @@ class WordsScreen extends StatelessWidget {
   }
 }
 
-// enum WordQuery {
-//   a1a,
-//   a1b,
-//   a1c,
-//   a1d,
-//   b1a,
-//   b1b,
-//   b1c,
-//   b1d,
-//
-// }
-//
-//
-//
-//  String wordQuery ({ WordQuery query = WordQuery.a1a  }) {
-//
-//
-//     switch (query) {
-//
-//       case WordQuery.a1a:
-//         return 'A1A';
-//
-//       case WordQuery.a1b:
-//         return 'A1B';
-//
-//       case WordQuery.a1c:
-//         return 'A1C';
-//
-//       case WordQuery.a1d:
-//         return 'A1D';
-//
-//       case WordQuery.b1a:
-//         return 'B1A';
-//
-//       case WordQuery.b1b:
-//         return  'B1B';
-//
-//       case WordQuery.b1c:
-//         return  'B1C';
-//
-//       case WordQuery.b1d:
-//         return  'B1D';
-//
-//   }
-//
-// }
-//
-// extension on Query<WordModel> {
-//   /// Create a firebase query from a [WordQuery]
-//   Query<WordModel> queryBy(WordQuery query) {
-//     switch (query) {
-//       case WordQuery.a1a:
-//         return where('level', arrayContainsAny: ['A1A']);
-//
-//       case WordQuery.a1b:
-//         return where('level', arrayContainsAny: ['A1B']);
-//
-//       case WordQuery.a1c:
-//         return where('level', arrayContainsAny: ['A1C']);
-//
-//       case WordQuery.a1d:
-//         return where('level', arrayContainsAny: ['A1D']);
-//
-//       case WordQuery.b1a:
-//         return where('level', arrayContainsAny: ['B1A']);
-//
-//       case WordQuery.b1b:
-//         return where('level', arrayContainsAny: ['B1B']);
-//
-//       case WordQuery.b1c:
-//         return where('level', arrayContainsAny: ['B1C']);
-//
-//       case WordQuery.b1d:
-//         return where('level', arrayContainsAny: ['B1D']);
-//
-//     }
-//   }
-//
-// }
+
 
 
 

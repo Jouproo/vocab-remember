@@ -49,6 +49,10 @@ class AppGetWordSuccessState extends AppStates {}
 
 class AppGetWordErrorState extends AppStates {}
 
+class AppGetWordImageSuccessState extends AppStates {}
+
+class AppGetWordImageErrorState extends AppStates {}
+
 class AppRemoveWordSuccessState extends AppStates {}
 
 class AppRemoveWordErrorState extends AppStates {}
@@ -70,3 +74,9 @@ class AppImagePickedSuccessState extends AppStates {}
 class AppImagePickedErrorState extends AppStates {}
 
 class SocialRemovePostImageState extends AppStates {}
+
+class AppDownloadImageLoadingState extends AppStates {}
+
+class AppDownloadImageSuccessState extends AppStates {}
+
+class AppDownloadImageErrorState extends AppStates {}

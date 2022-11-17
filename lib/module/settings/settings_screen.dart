@@ -70,13 +70,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         height: MediaQuery.of(context).size.height * 0.8,
         child: Column(
           children: [
-            CircleAvatar(
-              radius: 50.0,
-              backgroundImage: NetworkImage(AppAssets.garage),
-              backgroundColor: Colors.transparent,
-              onBackgroundImageError: (exception, stackTrace) =>
-                  log('$exception \n $stackTrace'),
-            ),
+            // CircleAvatar(
+            //   radius: 50.0,
+            //   backgroundImage: NetworkImage(AppAssets.garage),
+            //   backgroundColor: Colors.transparent,
+            //   onBackgroundImageError: (exception, stackTrace) =>
+            //       log('$exception \n $stackTrace'),
+            // ),
             const SizedBox(
               height: 20.0,
             ),

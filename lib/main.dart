@@ -39,7 +39,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
        return   BlocProvider(
-          create:  (BuildContext context) => AppCubit()..getUserData()..getWords()..createDatabase(),
+          create:  (BuildContext context) => AppCubit()..getUserData()..getWords()
+            ..createDatabase()..getWordImage()
+           ,
             child:BlocConsumer<AppCubit,AppStates>(
               listener: (context,state){},
               builder: (context,stat){

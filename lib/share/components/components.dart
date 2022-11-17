@@ -1,17 +1,16 @@
 
 import 'package:animations/animations.dart';
-import 'package:esaam_vocab/layout/layout_screen.dart';
+import 'package:custom_full_image_screen/custom_full_image_screen.dart';
 import 'package:esaam_vocab/model/word_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../layout/cubit/layout_cubit.dart';
+import '../../model/image_word_model.dart';
 import '../appspaces.dart';
 import '../const/colors/colors.dart';
 import '../const/colors/configs.dart';
@@ -109,7 +108,7 @@ Widget searchTextField({
           borderSide: BorderSide(color: Colors.white)
       ),
       hintText: 'Search', //Text that is displayed when nothing is entered.
-      hintStyle: TextStyle( //Style of hintText
+      hintStyle: const TextStyle( //Style of hintText
         color: Colors.grey,
         fontSize: 20,
       ),
@@ -118,12 +117,7 @@ Widget searchTextField({
 }
 
 
-         //Dismissible
-// onDismissed: (direction){
-// LayoutCubit.get(context).deleteData(id: model['id']);
-// },
-//SlidableAutoCloseBehavior
-// closeWhenOpened: true,
+
 
 
 Widget allWordItemBuild(WordModel model,context,index) => Padding(
@@ -155,7 +149,6 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
          SlidableAction(
 
           onPressed: (context){
-
           AppCubit.get(context).removeWord(wId:model.wId.toString(),rUid:model.uId.toString());
           },
           backgroundColor: Colors.grey,
@@ -187,7 +180,6 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
         ),
       ],
     ),
-
     child: Align(
      alignment: AlignmentDirectional.topStart,
       child: OpenContainer(
@@ -198,7 +190,6 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
          children: [
            Expanded(
              child: Container(
-
                width: MediaQuery.of(context).size.width,
                decoration: BoxDecoration(
                  color: Colors.grey[200],
@@ -224,11 +215,16 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
                  children: [
                    Row(
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     crossAxisAlignment: CrossAxisAlignment.center,
+                     
                      children: [
-                       Text(
-                         capitalize('${model.wordText}'),
-                         style: wCardTextStyle,),
+                       Expanded(
+                         child: Text(
+                           capitalize('${model.wordText}'),
+                           style: wCardTextStyle,
+                           maxLines: 2,
+
+                         ),
+                       ),
                        Tooltip(
                          message:  'Copy to clipboard' ,
                          child: IconButton(
@@ -248,14 +244,16 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
 
                      ],
                    ),
-                   Text(
-                     '${model.definitionText}',
-                     style: kCustomCardWordTextStyle.copyWith(
-                       fontWeight: FontWeight.w400,
-                       fontSize: 16.0,
+                   Expanded(
+                     child: Text(
+                       '${model.definitionText}',
+                       style: kCustomCardWordTextStyle.copyWith(
+                         fontWeight: FontWeight.w400,
+                         fontSize: 16.0,
+                       ),
+                       overflow: TextOverflow.ellipsis,
+                       maxLines: 5,
                      ),
-                     overflow: TextOverflow.ellipsis,
-                     maxLines: 5,
                    ),
                    Expanded(
                      child: Row(
@@ -395,8 +393,8 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
 //Key(model.uId.toString()),
 
 Widget allWordsBuilder({required List<WordModel> allWords}) => SlidableAutoCloseBehavior(
-  closeWhenOpened: true,
-  child:   ListView.separated(
+      child:  ListView.separated(
+      shrinkWrap: true,
       physics: const ScrollPhysics(),
       itemBuilder: (context , index){
         return allWordItemBuild(allWords[index],context, index);
@@ -413,7 +411,6 @@ Widget allWordsBuilder({required List<WordModel> allWords}) => SlidableAutoClose
 
 Widget wordItemBuild(Map model,context,index) => Dismissible(
   key: Key(model['id'].toString()),
-
   child: Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
     child: Align(
@@ -422,7 +419,7 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
 
         openBuilder: (context, action) {
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Container(
@@ -452,11 +449,15 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            capitalize('${model['word']}'),
-                            style: wCardTextStyle,),
+                          Expanded(
+                            child: Text(
+
+                              capitalize('${model['word']}'),
+                              style: wCardTextStyle,
+                            maxLines: 2,
+                            ),
+                          ),
                           Tooltip(
                             message:  'Copy to clipboard' ,
                             child: IconButton(
@@ -475,14 +476,16 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
                           ),
                         ],
                       ),
-                      Text(
-                        '${model['definition']}',
-                        style: kCustomCardWordTextStyle.copyWith(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16.0,
+                      Expanded(
+                        child: Text(
+                          '${model['definition']}',
+                          style: kCustomCardWordTextStyle.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16.0,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 4,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 5,
                       ),
                     ],
 
@@ -534,10 +537,16 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
                       style: kCardTextStyle,
                     ),
                   ),
-                  Icon(
-                    Icons.favorite,
-                    color:model['status']=='new'? Colors.grey : Colors.red[400],
-                    size: 25,
+                  IconButton(
+                    onPressed: ()
+                    {
+                    // AppCubit.get(context).changeFavorite(id: model['id'], index: index);
+                    },
+                    icon:   Icon(
+                      Icons.favorite,
+                      color:model['status']=='new'? Colors.grey : Colors.red[400],
+                      size: 25,
+                    ),
                   ),
                   IconButton(
                     onPressed: ()
@@ -581,6 +590,7 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
 );
 
  Widget wordsBuilder({required List<Map> words}) => ListView.separated(
+      shrinkWrap: true,
       itemBuilder: (context , index){
         return wordItemBuild(words[index],context, index);
       },
@@ -718,10 +728,9 @@ Widget mainBuildItem (
       Color? unSelectedImageColor,
     })=> Expanded (
           child: GestureDetector(
-    onTap: (){
-      onTap();
-    },
-    child: Container(
+                  onTap: (){
+                  onTap();},
+              child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         //gradient: isSelected ? appGradient : null,
@@ -758,3 +767,238 @@ Widget mainBuildItem (
 );
 
 void doNothing(BuildContext context) {}
+
+// Widget buildWordImageItem(ImageWordModel ? model,context,index) => Card(
+//   clipBehavior: Clip.antiAliasWithSaveLayer,
+//   elevation: 5.0,
+//   margin: const EdgeInsets.symmetric(
+//     horizontal: 8.0,
+//   ),
+//   child: Padding(
+//     padding: const EdgeInsets.all(10.0),
+//     child: Column(
+//       children: [
+//         Row(
+//           children: [
+//             CircleAvatar(
+//               radius: 14.0,
+//               backgroundImage: NetworkImage(
+//                 '${model!.image}',
+//               ),
+//             ),
+//             const SizedBox(
+//               width: 15.0,
+//             ),
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Text(
+//                         '${model.name}',
+//                         style: const TextStyle(),
+//                       ),
+//                       Text(
+//                         '${model.level}',
+//                         style: const TextStyle(),
+//                       ),
+//
+//
+//                     ],
+//                   ),
+//                   Text(
+//                     '${model.dateTime}',
+//                     style: Theme.of(context).textTheme.caption!.copyWith(
+//                       height: 1.4,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//
+//         Padding(
+//           padding: const EdgeInsetsDirectional.only(
+//               top: 15
+//           ),
+//           child: Container(
+//             height: 140.0,
+//             width: double.infinity,
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.circular(
+//                 7.0,
+//               ),
+//               image:   DecorationImage(
+//                 image: NetworkImage(
+//                   '${model.wordImage}',
+//                 ),
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//         ),
+//         Padding(
+//           padding: const EdgeInsets.symmetric(
+//             vertical: 15.0,
+//           ),
+//           child: Container(
+//             width: double.infinity,
+//             height: 1.0,
+//             color: Colors.grey[300],
+//           ),
+//         ),
+//         Text(
+//           '${model.definitionText}',
+//           style: Theme.of(context).textTheme.subtitle1,
+//         ),
+//
+//       ],
+//     ),
+//   ),
+// );
+
+Widget buildWordImageItem(ImageWordModel ? model,context,index) => Align(
+  child: OpenContainer(
+    openBuilder: (context, action) {
+      return ImageNetworkFullscreen(
+        imageUrl: '${model?.wordImage}',
+        imageBorderRadius: 20,
+        // imageWidth: 200,
+        // imageHeight: 200,
+        imageFit: BoxFit.fitWidth,
+
+      );
+
+    }, closedBuilder: ( context, action) {
+    return Card(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      elevation: 5.0,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 8.0,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 14.0,
+                  backgroundImage: NetworkImage(
+                    '${model!.image}',
+                  ),
+                ),
+                const SizedBox(
+                  width: 15.0,
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${model.name}',
+                            style: const TextStyle(),
+                          ),
+                          // Text(
+                          //   '${model.dateTime}',
+                          //
+                          //   style: Theme.of(context).textTheme.caption!.copyWith(
+                          //     height: 1.4,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon:  const Icon(
+                              Icons.download,
+                              size: 22.0,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              AppCubit.get(context).downloadImage(model.wordImage.toString());
+                            },
+                          ),
+                          IconButton(
+                            icon:  const Icon(
+                              Icons.delete_outline,
+                              size: 22.0,
+                              color: Colors.blue,
+                            ),
+                            onPressed: () {
+                              AppCubit.get(context).
+                              deleteWordImage(
+                                  wId: model.wId.toString(),
+                                  rUid:model.uId.toString(),
+                                  wordImage: model.wordImage.toString()
+                              );
+                            },
+                          ),
+                        ],
+                      )
+
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                  top: 15
+              ),
+              child: Container(
+                height: 140.0,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    7.0,
+                  ),
+                  image:   DecorationImage(
+                    image: NetworkImage(
+                      '${model.wordImage}',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            if(model.definitionText != '')
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 15.0,
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    height: 1.0,
+                    color: Colors.grey[300],
+                  ),
+                ),
+                Text(
+                  '${model.definitionText}',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ],
+            )
+
+
+          ],
+        ),
+      ),
+    );
+  },
+
+  ),
+
+
+);
+
+

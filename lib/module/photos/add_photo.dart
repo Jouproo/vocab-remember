@@ -36,7 +36,6 @@ class AddNewPhoto extends StatelessWidget {
           if(state is AppCreateWordErrorState){
             showToast(msg: state.error.toString(),color: Colors.red);
           }
-
         },
         builder: (context, state) {
           AppCubit cubit = AppCubit.get(context);
@@ -62,23 +61,25 @@ class AddNewPhoto extends StatelessWidget {
               actions: [
                 IconButton(
                   onPressed:() {
+                    var now = DateTime.now();
+                     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+                    if(cubit.wordImage==null){
+                      showToast(msg: 'pleas pick image' ,
+                          color: Colors.red);
+                    }else{
+                      cubit.uploadWordImage(
+                          dateTime: formattedDate ,
+                          text: definitionController.text ,
+                          level: levelController.text.toUpperCase()
+                      );
+                    }
                   },
                   icon:  Icon(Icons.add_a_photo,
                     color: Theme.of(context).primaryColor,
                   ),
 
-
                 ),
-                IconButton(
-                  onPressed:() {
-                  },
-                  icon:  Icon(Icons.search,
-                    color: Theme.of(context).primaryColor,
-                  ),
-
-
-                ),
-
+                 const SizedBox(width: 13,)
               ],
               elevation: 3.0,
             ),
@@ -94,11 +95,11 @@ class AddNewPhoto extends StatelessWidget {
                           children: [
                             TextFormField(
                               decoration: InputDecoration(
-                                   border: OutlineInputBorder( borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                   border: const OutlineInputBorder( borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                // InputBorder.none,
                                 hintText: 'Add Description or Definition if you have ',
                                 hintStyle: Theme.of(context).textTheme.caption,
-                                prefixIcon:Icon(Icons.description_outlined) ,
+                                prefixIcon:const Icon(Icons.description_outlined) ,
 
                               ),
                               controller: definitionController,
@@ -106,11 +107,12 @@ class AddNewPhoto extends StatelessWidget {
                             const SizedBox(height: 20.0),
                             TextFormField(
                               decoration: InputDecoration(
-                                  border:  OutlineInputBorder( borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                  border:  const OutlineInputBorder
+                                    ( borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                 //InputBorder.none,
                                 hintText: 'Add leve ?  ',
                                 hintStyle: Theme.of(context).textTheme.caption,
-                                prefixIcon:Icon(Icons.star) ,
+                                prefixIcon:const Icon(Icons.star) ,
 
                               ),
                               controller: levelController,
@@ -209,7 +211,7 @@ class AddNewPhoto extends StatelessWidget {
                         clipBehavior:Clip.hardEdge ,
                         onPressed: () {
                           var now = DateTime.now();
-                          String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+                           String formattedDate = DateFormat('yyyy-MM-dd').format(now);
                           if(cubit.wordImage==null){
                             showToast(msg: 'pleas pick image' ,
                             color: Colors.red);
