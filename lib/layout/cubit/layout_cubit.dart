@@ -1,6 +1,5 @@
-import 'dart:ffi';
-import 'dart:io';
 
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:esaam_vocab/layout/cubit/states.dart';
@@ -11,7 +10,6 @@ import 'package:esaam_vocab/module/login/app_login_screen.dart';
 import 'package:esaam_vocab/module/photos/photos_screen.dart';
 import 'package:esaam_vocab/share/cash/cash_helper.dart';
 import 'package:esaam_vocab/share/components/components.dart';
-import 'package:esaam_vocab/share/const/appassets.dart';
 import 'package:esaam_vocab/share/const/colors/configs.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -26,7 +24,8 @@ import 'package:sqflite/sqflite.dart';
 import '../../model/image_word_model.dart';
 import '../../model/user_model.dart';
 import '../../module/home/home_screen.dart';
-import '../../try.dart';
+import '../../module/yourWords/your_words_screen.dart';
+
 
 class AppCubit  extends Cubit<AppStates>{
 
@@ -45,9 +44,9 @@ class AppCubit  extends Cubit<AppStates>{
 
   List <Widget> screens =
   [
-     HomeScreen(),
-     WordsScreen(),
-     FavoritesScreen(),
+     const HomeScreen(),
+      YourWordsScreen(),
+      const FavoritesScreen(),
      PhotosScreen(),
   ];
 
@@ -97,21 +96,21 @@ class AppCubit  extends Cubit<AppStates>{
       version: 1,
       onCreate: (database, version) {
 
-        print('database created');
+        debugPrint('database created');
         database.execute(
             'CREATE TABLE vocabulary ('
                 'id INTEGER PRIMARY KEY, word TEXT, definition TEXT, '
                 'name TEXT,wId TEXT,status TEXT,definitionStatus TEXT )')
             .then((value) {
-          print('table created');
+          debugPrint('table created');
         }).catchError((error) {
-          print('Error When Creating Table ${error.toString()}');
+          debugPrint('Error When Creating Table ${error.toString()}');
         });
       },
       onOpen: (database)
       {
         getDataFromDatabase(database);
-        print('database opened');
+        debugPrint('database opened');
       },
     ).then((value) {
       database = value;
@@ -131,11 +130,10 @@ class AppCubit  extends Cubit<AppStates>{
         'INSERT INTO vocabulary(word, definition, name,wId,status,definitionStatus)'
             ' VALUES("$word", "$definition", "$name", "$wId","$status","false")',
       ).then((value) {
-        print('$value inserted successfully');
         emit(AppInsertDatabaseState());
         getDataFromDatabase(database);
       }).catchError((error) {
-        print('Error When Inserting New Record ${error.toString()}');
+
       });
 
     });
@@ -150,27 +148,24 @@ class AppCubit  extends Cubit<AppStates>{
 
       value.forEach((element)
       {
+          words.add(element);
+
           if(element['status'] == 'favorite'){
             favorites.add(element);
-          }else{
-            words.add(element);
           }
 
       });
-      print(words.toString());
       emit(AppGetDatabaseState());
     });
   }
 
   void deleteData({
-     required int   id,
+     required int  id,
   }) async
   {
     database!.rawDelete('DELETE FROM vocabulary WHERE id = ?', [id])
-
         .then((value)
     {
-      print('deleted');
       getDataFromDatabase(database);
       emit(AppDeleteDatabaseState());
     });
@@ -199,7 +194,6 @@ class AppCubit  extends Cubit<AppStates>{
    Future<List<Map<String, dynamic>>?> searchScoutsMap( String word,  String definition) async {
     fav = [];
     Database ? db = database;
-    print("This works? $db");
     var result = await db?.rawQuery(
         "SELECT * FROM vocabulary  WHERE word  Like '%$word%' AND definition Like '%$definition%'");
     debugPrint("result is working? $result");
@@ -208,8 +202,6 @@ class AppCubit  extends Cubit<AppStates>{
            }
        return result;
   }
-
-
 
   bool isBottomSheetShown = false;
   IconData fabIcon = Icons.edit;
@@ -251,7 +243,7 @@ class AppCubit  extends Cubit<AppStates>{
       fireStore.collection('users').doc(auth.currentUser?.uid)
           .get().then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-     // print('Document data: ${documentSnapshot.data()}');
+     // debugPrint('Document data: ${documentSnapshot.data()}');
       userModel = UsersModel.fromJson(documentSnapshot.data()! as Map<String, dynamic>);
       debugPrint(userModel!.toMap().toString());
       emit(AppGetUserSuccessState());
@@ -316,10 +308,10 @@ class AppCubit  extends Cubit<AppStates>{
     allWords = [];
     fireStore.collection('Words').orderBy('dateTime').get()
         .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-      //  debugPrint(doc.id);
+      for (var doc in querySnapshot.docs) {
+
         allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
-      });
+      }
       emit(AppGetWordSuccessState());
       debugPrint(' allWords  ${allWords.length}  ');
        debugPrint(allWords[1].toMap().toString());
@@ -335,10 +327,10 @@ class AppCubit  extends Cubit<AppStates>{
     fireStore.collection('Words')
         .where('level', whereIn: [level]).orderBy('dateTime').get()
         .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
+      for (var doc in querySnapshot.docs) {
         //  debugPrint(doc.id);
         allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
-      });
+      }
       emit(AppGetWordSuccessState());
       debugPrint(' allWords  ${allWords.length}  ');
       debugPrint(allWords[1].toMap().toString());
@@ -378,10 +370,10 @@ class AppCubit  extends Cubit<AppStates>{
         .startAt([query])
         .endAt([query+'\uf8ff'])
         .get().then((QuerySnapshot querySnapshot) {
-       querySnapshot.docs.forEach((doc) {
+       for (var doc in querySnapshot.docs) {
       //   allWords.where((element) => seen.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )));
          allWords.add(WordModel.fromJson(doc.data()! as Map<String, dynamic> )) ;
-       });
+       }
 
       // var seen = Set<String>();
       // List<WordModel> searchWords = allWords.where((words) => seen.add(words.wordText!)).toList();
@@ -463,6 +455,8 @@ class AppCubit  extends Cubit<AppStates>{
 
       await GoogleSignIn().signOut().then((value) {
         CashHelper.removeData(key: 'uId');
+        isSearch =false ;
+        isSetting = false;
         emit(SinOutSuccessState());
         navigateTo(context, AppLoginScreen());
       });
@@ -619,7 +613,7 @@ class AppCubit  extends Cubit<AppStates>{
        final url = wordImage ;
        storage.getDownloadURL().toString();
        final  name =  storage .name ;
-       debugPrint('url is   ${url}');
+       debugPrint('url is   $url');
      final tempDir = await getTemporaryDirectory();
      final path = '${tempDir.path}/$name' ;
      await Dio().download(url, path).then((value) {

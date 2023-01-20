@@ -1,6 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:esaam_vocab/layout/cubit/layout_cubit.dart';
 import 'package:esaam_vocab/module/login/cubit/states.dart';
 import 'package:esaam_vocab/share/components/components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,9 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-
 import '../../../model/user_model.dart';
-import '../app_login_screen.dart';
+
 
 
 class AppLoginCubit extends Cubit<AppLoginStates> {
@@ -124,6 +122,8 @@ class AppLoginCubit extends Cubit<AppLoginStates> {
             userId: userData.uid ,
             image: userData.photoURL
         );
+        debugPrint(userData.uid);
+        debugPrint(userData.displayName);
 
        return null;
       });

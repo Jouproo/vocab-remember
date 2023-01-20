@@ -98,11 +98,12 @@ flutter:
     - icons/svgVectors/SignUp.svg
     - icons/svgVectors/login.svg
     - icons/svgVectors/googleLogo.svg
-    - icons/svgVectors/Prhase.svg
+    - icons/svgVectors/read.svg
     - icons/svgVectors/book.svg
-    - icons/svgVectors/phrase1.svg
+    - icons/svgVectors/words.svg
     - icons/svgVectors/hand.svg
     - icons/svgVectors/notes.svg
+    - icons/svgVectors/phrases.svg
 
 
 

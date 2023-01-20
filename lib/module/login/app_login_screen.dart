@@ -1,16 +1,15 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:esaam_vocab/layout/cubit/layout_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../layout/layout_screen.dart';
 import '../../share/cash/cash_helper.dart';
 import '../../share/components/bottom_bar_textfield.dart';
 import '../../share/components/components.dart';
 import '../../share/const/colors/configs.dart';
-import '../register/cubit/states.dart';
 import '../register/app_register_screen.dart';
 import 'cubit/cubit.dart';
 import 'cubit/states.dart';
@@ -166,6 +165,7 @@ class AppLoginScreen extends StatelessWidget {
                                   child: GestureDetector(
                                     onTap: () async {
                                       cubit.signInWithGoogle();
+                                      // AppCubit.get(context).getUserData();
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 12.0),

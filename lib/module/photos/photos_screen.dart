@@ -12,7 +12,7 @@ class PhotosScreen extends StatelessWidget {
    PhotosScreen({Key? key}) : super(key: key);
 
 
-bool inDownload = false ;
+   bool inDownload = false ;
 
   @override
   Widget build(BuildContext context) {

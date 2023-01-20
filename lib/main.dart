@@ -1,10 +1,7 @@
-import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:esaam_vocab/layout/layout_screen.dart';
 import 'package:esaam_vocab/share/bloc_observer.dart';
 import 'package:esaam_vocab/share/cash/cash_helper.dart';
 
-import 'package:esaam_vocab/user_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,9 +63,9 @@ class MyApp extends StatelessWidget {
                       ),
                     ) ,
 
-
                   ),
-                  home: (CashHelper.getData(key: 'uId')==null)? AppLoginScreen(): LayoutScreen(),
+                  home:SplashScreen()
+                  //(CashHelper.getData(key: 'uId')==null)? AppLoginScreen(): LayoutScreen(),
                 );
               },
 

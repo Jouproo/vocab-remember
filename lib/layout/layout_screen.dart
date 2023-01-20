@@ -2,16 +2,14 @@
 import 'package:esaam_vocab/layout/cubit/states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../share/components/components.dart';
 import 'cubit/layout_cubit.dart';
 
 class LayoutScreen extends StatelessWidget {
 
    LayoutScreen({Key? key}) : super(key: key);
 
-   var scaffoldKey = GlobalKey<ScaffoldState>();
-   var formKey = GlobalKey<FormState>();
+ //  var scaffoldKey = GlobalKey<ScaffoldState>();
+   //var formKey = GlobalKey<FormState>();
    var wordController = TextEditingController();
    var definitionController = TextEditingController();
    var dateController = TextEditingController();
@@ -26,7 +24,7 @@ class LayoutScreen extends StatelessWidget {
          builder: (context,stat){
            AppCubit cubit = AppCubit.get(context);
            return  Scaffold(
-             key: scaffoldKey,
+           //  key: scaffoldKey,
              body: cubit.screens[cubit.currentIndex],
 
              bottomNavigationBar: BottomNavigationBar(
@@ -68,7 +66,6 @@ class LayoutScreen extends StatelessWidget {
            );
                  },
          );
-
 
    }
   }

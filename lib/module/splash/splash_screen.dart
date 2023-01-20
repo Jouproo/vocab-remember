@@ -69,6 +69,19 @@ class _SplashScreenState extends State<SplashScreen> {
               letterSpacing: 2,
             ),
           ),
+          const SizedBox(
+            height: 25,
+          ),
+          const Text(
+            "Beta version",
+            style: TextStyle(
+              color: Colors.black,
+              //  Theme.of(context).primaryColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
+          ),
         ],
       ),
     );

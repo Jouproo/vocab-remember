@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../share/components/components.dart';
 
 
+
 class YourWordsScreen extends StatelessWidget {
 
    YourWordsScreen({Key? key}) : super(key: key);
@@ -28,28 +29,25 @@ class YourWordsScreen extends StatelessWidget {
           return  Scaffold(
             key: scaffoldKey,
             appBar: AppBar(
-
-             leading:   IconButton(
-               onPressed:() {
-                     if(cubit.isSearch) {
-                       cubit.changSearchState();
-                     }else{
-                       Navigator.of(context).pop();
-                     }
-
-
-               },
-               icon:  Icon(Icons.arrow_back,
-                 color: Theme.of(context).primaryColor,
-               ),
-
-
-             ),
+             // leading: IconButton(
+             //   onPressed:() {
+             //     if(cubit.isSearch) {
+             //       cubit.changSearchState();
+             //     }else{
+             //       navigateTo(context, LayoutScreen());
+             //      // Navigator.of(context).pop();
+             //     }
+             //   },
+             //   icon:  Icon(Icons.arrow_back,
+             //     color: Theme.of(context).primaryColor,
+             //   ),
+             // ),
                 title: (cubit.isSearch) ? searchTextField(
                   controller: searchController,
                   prefixFunction: (){
                     cubit.changSearchState();
                   },
+                  prefixIcon: Icons.arrow_back,
                   onChang: (query){
                     cubit.yourWordsSearch(query: query);},
 
@@ -82,7 +80,6 @@ class YourWordsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                     child: (cubit.isSearch) ? wordsBuilder(words:  cubit.yourSearchWords,):
                     wordsBuilder(words:  cubit.words,)
-
                 )
             ),
             floatingActionButton: FloatingActionButton(
@@ -90,7 +87,6 @@ class YourWordsScreen extends StatelessWidget {
                 var now = DateTime.now();
                 // String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
                 if (cubit.isBottomSheetShown){
-
                   if(formKey.currentState!.validate()){
                     cubit.insertToDatabase(
                       word: wordController.text,
@@ -129,7 +125,6 @@ class YourWordsScreen extends StatelessWidget {
                                 prefix: Icons.title_outlined,
                                 radius: 15
                             ),
-
                           ],
                         ),
                       ),
@@ -144,9 +139,7 @@ class YourWordsScreen extends StatelessWidget {
                   });
 
                   cubit.changeBottomSheetState(isShow: true, icon: Icons.add);
-
                 }
-
                 // cubit.insertToDatabase(word: 'welcome', definition: 'its mean hello ', name: 'yousef');
               },
               child: Icon (

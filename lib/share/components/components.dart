@@ -93,13 +93,14 @@ Widget searchTextField({
     // textInputAction: TextInputAction.search, //Specify the action button on the keyboard
     decoration:  InputDecoration(
       suffixIcon: IconButton(onPressed: (){
-        suffixFunction!();
-      },
-          icon: const Icon(Icons.close)),
+        suffixFunction!();},
+          icon: const Icon(Icons.close)
+      ),
          prefixIcon:IconButton(onPressed: (){
            prefixFunction!();
          },
-             icon:  Icon(prefixIcon)) ,
+             icon:  Icon(prefixIcon)
+         ) ,
       //Style of TextField
       enabledBorder: const UnderlineInputBorder( //Default TextField border
           borderSide: BorderSide(color: Colors.grey)
@@ -117,10 +118,7 @@ Widget searchTextField({
 }
 
 
-
-
-
-Widget allWordItemBuild(WordModel model,context,index) => Padding(
+Widget communityWordItemBuild(WordModel model,context,index) => Padding(
   padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
   child: Slidable(
     key: Key(model.uId.toString()),
@@ -147,7 +145,6 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
           label: 'Favorite',
         ),
          SlidableAction(
-
           onPressed: (context){
           AppCubit.get(context).removeWord(wId:model.wId.toString(),rUid:model.uId.toString());
           },
@@ -392,12 +389,12 @@ Widget allWordItemBuild(WordModel model,context,index) => Padding(
 );
 //Key(model.uId.toString()),
 
-Widget allWordsBuilder({required List<WordModel> allWords}) => SlidableAutoCloseBehavior(
+Widget communityWordsBuilder({required List<WordModel> allWords}) => SlidableAutoCloseBehavior(
       child:  ListView.separated(
       shrinkWrap: true,
       physics: const ScrollPhysics(),
       itemBuilder: (context , index){
-        return allWordItemBuild(allWords[index],context, index);
+        return communityWordItemBuild(allWords[index],context, index);
       },
       separatorBuilder: (context, index) => Container(
         width: double.infinity,
@@ -409,21 +406,75 @@ Widget allWordsBuilder({required List<WordModel> allWords}) => SlidableAutoClose
 );
 
 
-Widget wordItemBuild(Map model,context,index) => Dismissible(
-  key: Key(model['id'].toString()),
-  child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
+ Widget wordItemBuild(Map model,context,index) => Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 05),
+  child: Slidable(
+    key: Key(model['id'].toString()),
+    startActionPane:ActionPane(
+      dismissible: DismissiblePane(onDismissed: () {
+        AppCubit.get(context).deleteData(id: model['id']);
+      }),
+      extentRatio: 1/1,
+      motion:const ScrollMotion(),
+      children: [
+        SlidableAction(
+          onPressed: (context){
+            AppCubit.get(context).insertToDatabase(
+                word: '${model['word']}',
+                definition: '${model['definition']}',
+                // wId: '${model['wId']}',
+                status: 'favorite'
+            );
+          },
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.favorite,
+          label: 'Favorite',
+        ),
+        SlidableAction(
+          onPressed: (context){
+            AppCubit.get(context).deleteData(id: model['id']);
+          },
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.delete,
+          label: 'Delete',
+
+        ),
+        SlidableAction(
+          onPressed: (context){
+            Clipboard.setData(ClipboardData(
+                text:'${model['word']}' ));
+            Fluttertoast.showToast(msg: 'Text Copied To Clipboard');
+          },
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.content_copy,
+          label: 'Copy',
+        ),
+        const SlidableAction(
+          onPressed: doNothing,
+          backgroundColor: Colors.grey,
+          //Color(0xFFFE4A49),
+          foregroundColor: Colors.white,
+          icon: Icons.close,
+          label: 'Close',
+        ),
+      ],
+
+    ) ,
     child: Align(
       alignment: AlignmentDirectional.topStart,
       child: OpenContainer(
-
         openBuilder: (context, action) {
           return Column(
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Container(
-
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
@@ -452,7 +503,6 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
                         children: [
                           Expanded(
                             child: Text(
-
                               capitalize('${model['word']}'),
                               style: wCardTextStyle,
                             maxLines: 2,
@@ -505,7 +555,6 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
 
             ],
           );
-
         }, closedBuilder: ( context, action) {
         return Container(
           width: double.infinity,
@@ -540,7 +589,7 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
                   IconButton(
                     onPressed: ()
                     {
-                    // AppCubit.get(context).changeFavorite(id: model['id'], index: index);
+                    AppCubit.get(context).changeFavorite(id: model['id'], index: index);
                     },
                     icon:   Icon(
                       Icons.favorite,
@@ -578,17 +627,12 @@ Widget wordItemBuild(Map model,context,index) => Dismissible(
           ),
         );
       },
-
       ),
     ),
-
   ),
-
-  onDismissed: (direction){
-    AppCubit.get(context).deleteData(id: model['id']);
-  },
-);
-
+  );
+     // AppCubit.get(context).deleteData(id: model['id']);
+     //key: Key(model['id'].toString()),
  Widget wordsBuilder({required List<Map> words}) => ListView.separated(
       shrinkWrap: true,
       itemBuilder: (context , index){
@@ -612,18 +656,14 @@ Widget homeBuildItem (
       double ? fontSize = 18,
       Color? unSelectedImageColor,
     })=>    Expanded (
-  child: GestureDetector(
-    onTap: (){
+     child: GestureDetector(
+      onTap: (){
       onTap();
-    },
-    child: Container(
+      },
+      child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        //gradient: isSelected ? appGradient : null,
         color: ChooseColor.defaultBackgroundColor
-        // color: !isSelected! ? ChooseColor.defaultBackgroundColor : ChooseColor.defaultColor,
-        // color: !isSelected ? ChooseColor.defaultBackgroundColor: ChooseColor.defaultColor,
-        //!isSelected ? Colors.grey[100] : const Color(0xFF1A5276),
       ),
       child: Column(
           children: [
@@ -635,9 +675,7 @@ Widget homeBuildItem (
                 child:SvgPicture.asset(
                   image,
                   width: 250.0,
-                  // color: isSelected ? Colors.white :  Get.theme.primaryColor,
-                  //isSelected ? Colors.white : const Color(0xFF1A5276),
-                  // color: Colors.blueAccent,
+
                 ),
               ),
             ),
@@ -645,7 +683,7 @@ Widget homeBuildItem (
             Text(
               text,
               style: TextStyle(
-                // color:  isSelected ? Colors.white : Colors.black,
+
                 fontSize: fontSize , ),
             ),
             AppSpaces.vertical15,
@@ -685,8 +723,6 @@ void showToast({required String msg,  Color ? color}) =>  Fluttertoast.showToast
       textColor: Colors.white,
       fontSize: 16.0
   );
-  // final snackBar = SnackBar(content: Text('ERROR: $error'));
-  // ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
 Widget defaultButton({
@@ -733,10 +769,8 @@ Widget mainBuildItem (
               child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        //gradient: isSelected ? appGradient : null,
         color: !isSelected ? ChooseColor.defaultBackgroundColor : ChooseColor.defaultColor,
-        // color: !isSelected ? ChooseColor.defaultBackgroundColor: ChooseColor.defaultColor,
-        //!isSelected ? Colors.grey[100] : const Color(0xFF1A5276),
+
       ),
       child: Column(
           children: [
@@ -749,8 +783,6 @@ Widget mainBuildItem (
                 width: double.infinity,
                 fit: BoxFit.fill,
 
-                // color: isSelected ? Colors.white :  Get.theme.primaryColor,
-                //isSelected ? Colors.white : const Color(0xFF1A5276),
               ),
             ),
             AppSpaces.vertical15,
@@ -768,97 +800,6 @@ Widget mainBuildItem (
 
 void doNothing(BuildContext context) {}
 
-// Widget buildWordImageItem(ImageWordModel ? model,context,index) => Card(
-//   clipBehavior: Clip.antiAliasWithSaveLayer,
-//   elevation: 5.0,
-//   margin: const EdgeInsets.symmetric(
-//     horizontal: 8.0,
-//   ),
-//   child: Padding(
-//     padding: const EdgeInsets.all(10.0),
-//     child: Column(
-//       children: [
-//         Row(
-//           children: [
-//             CircleAvatar(
-//               radius: 14.0,
-//               backgroundImage: NetworkImage(
-//                 '${model!.image}',
-//               ),
-//             ),
-//             const SizedBox(
-//               width: 15.0,
-//             ),
-//             Expanded(
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: [
-//                       Text(
-//                         '${model.name}',
-//                         style: const TextStyle(),
-//                       ),
-//                       Text(
-//                         '${model.level}',
-//                         style: const TextStyle(),
-//                       ),
-//
-//
-//                     ],
-//                   ),
-//                   Text(
-//                     '${model.dateTime}',
-//                     style: Theme.of(context).textTheme.caption!.copyWith(
-//                       height: 1.4,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//
-//         Padding(
-//           padding: const EdgeInsetsDirectional.only(
-//               top: 15
-//           ),
-//           child: Container(
-//             height: 140.0,
-//             width: double.infinity,
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.circular(
-//                 7.0,
-//               ),
-//               image:   DecorationImage(
-//                 image: NetworkImage(
-//                   '${model.wordImage}',
-//                 ),
-//                 fit: BoxFit.cover,
-//               ),
-//             ),
-//           ),
-//         ),
-//         Padding(
-//           padding: const EdgeInsets.symmetric(
-//             vertical: 15.0,
-//           ),
-//           child: Container(
-//             width: double.infinity,
-//             height: 1.0,
-//             color: Colors.grey[300],
-//           ),
-//         ),
-//         Text(
-//           '${model.definitionText}',
-//           style: Theme.of(context).textTheme.subtitle1,
-//         ),
-//
-//       ],
-//     ),
-//   ),
-// );
 
 Widget buildWordImageItem(ImageWordModel ? model,context,index) => Align(
   child: OpenContainer(

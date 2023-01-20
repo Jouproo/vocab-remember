@@ -1,17 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:esaam_vocab/layout/cubit/layout_cubit.dart';
 import 'package:esaam_vocab/layout/cubit/states.dart';
-import 'package:esaam_vocab/module/Words/word_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
+import '../../layout/layout_screen.dart';
 import '../../model/word_model.dart';
 import '../../share/components/components.dart';
-import '../../share/const/colors/configs.dart';
-import '../search/search_bar.dart';
-import '../../user_test.dart';
+
 
 class WordsScreen extends StatelessWidget {
 
@@ -36,9 +34,14 @@ class WordsScreen extends StatelessWidget {
        listener: (context, state){},
         builder: (context, state) {
           AppCubit cubit = AppCubit.get(context);
-
           return Scaffold(
               appBar: AppBar(
+                leading:  IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                    icon:const Icon(Icons.arrow_back),
+                  color: Colors.black,
+
+                ),
                 elevation: 1.0 ,
                 title: (cubit.isSearch) ? searchTextField(
                   onSubmitted: (){
@@ -50,12 +53,11 @@ class WordsScreen extends StatelessWidget {
                     cubit.changSearchState();
                   },
                   onChang: (query){
-                    cubit.allWordsSearch(query: query);},
-
+                    cubit.allWordsSearch(query: query);
+                    },
                   suffixFunction: (){
                     searchController.clear();
                     },
-
                   )
                     : Text(topText ,style: const TextStyle(
                     fontFamily: 'Montserrat',
@@ -174,9 +176,8 @@ class WordsScreen extends StatelessWidget {
                            alignment: Alignment.topCenter,
                            child: Padding(
                              padding: const EdgeInsets.all(06.0),
-
-                             child: (cubit.isSearch)? allWordsBuilder(allWords: cubit.allSearchWords,):
-                             allWordsBuilder(allWords: cubit.allWords,)
+                             child: (cubit.isSearch)? communityWordsBuilder(allWords: cubit.allSearchWords,):
+                             communityWordsBuilder(allWords: cubit.allWords,)
                              ,
                            ),
                          ),
@@ -215,9 +216,9 @@ class WordsScreen extends StatelessWidget {
                         padding:  const EdgeInsets.all(
                           20.0,
                         ),
-                        child: Form(
-                          key: formKey,
-                          child: Column(
+                          child: Form(
+                           key: formKey,
+                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               defaultTextFormField(
@@ -264,7 +265,6 @@ class WordsScreen extends StatelessWidget {
                     cubit.changeBottomSheetState(isShow: true, icon: Icons.add);
 
                   }
-
                   // cubit.insertToDatabase(word: 'welcome', definition: 'its mean hello ', name: 'yousef');
                 },
                 child: Icon (

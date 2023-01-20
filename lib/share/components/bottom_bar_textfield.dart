@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 class BottomBarTextField extends StatefulWidget {
 
-
   final String ? hint;
   final String ? label;
   final Icon ? icon;
@@ -15,11 +14,10 @@ class BottomBarTextField extends StatefulWidget {
   final bool  Function(String) ? validator;
   final String ? errorText;
   final double ?  radius ;
- // final TextEditingController ? controller ;
 
-
-   BottomBarTextField(
-      { this.icon,
+    BottomBarTextField(
+      {
+        this.icon,
         this.horMargin,
         this.verMargin,
         this.inputType,
@@ -30,7 +28,6 @@ class BottomBarTextField extends StatefulWidget {
         this.errorText,
         this.radius = 10,
         required this.onChanged,
-       // required this.controller
       });
 
   @override
